@@ -210,7 +210,7 @@ namespace Eligor
 
             void Roll()
             {
-                while (!(((pat_sex[patint] == "m" && pid % 256 > pat_gender[patint]) || ((pat_sex[patint] == "f" || pat_sex[patint] == "g") && (pid % 256 <= pat_gender[patint]))) && ((pat_nature[patint] == pid % 25) || (pat_nature[patint] > 24))))
+                while (!(((pat_sex[patint] == "m" && pid & 255 > pat_gender[patint]) || ((pat_sex[patint] == "f" || pat_sex[patint] == "g") && (pid & 255 <= pat_gender[patint]))) && ((pat_nature[patint] == pid % 25) || (pat_nature[patint] > 24))))
                 {
                     tempseed = RNGAdv(2, (uint)(tempseed & 0xFFFFFFFF));
                     pid = GetPID((uint)(tempseed & 0xFFFFFFFF));
@@ -315,7 +315,7 @@ namespace Eligor
                         if ((patstring == "Umbreon (Colosseum)") || (patstring == "Espeon (Colosseum)"))
                         {
                             e = origseed;
-                            while ((tsid == ((pid >> 16 ^ pid & 0xFFFF) >> 3)) || (pid % 256 < 31))
+                            while ((tsid == ((pid >> 16 ^ pid & 0xFFFF) >> 3)) || (pid & 255 < 31))
                             {
                                 e = RNGAdv(2, e);
                                 pid = GetPID(e);
@@ -325,7 +325,7 @@ namespace Eligor
                                 e = RNGAdv(7, e);
                                 tempseed = e; //Update seed to generate Espeon's IVs.
                                 pid = GetPID(e);
-                                while ((tsid == ((pid >> 16 ^ pid & 0xFFFF) >> 3)) || (pid % 256 < 31))
+                                while ((tsid == ((pid >> 16 ^ pid & 0xFFFF) >> 3)) || (pid & 255 < 31))
                                 {
                                     e = RNGAdv(2, e);
                                     pid = GetPID(e);
@@ -349,8 +349,8 @@ namespace Eligor
                     {
                         ivs = (uint)((SplitRNG((uint)(tempseed & 0xFFFFFFFF), 1) << 16) + (SplitRNG((uint)(tempseed & 0xFFFFFFFF), 2)));
                         int[] iva = { (int)(ivs >> 16) & 31, (int)(ivs >> 21) & 31, (int)(ivs >> 26) & 31, (int)(ivs >> 0) & 31, (int)(ivs >> 5) & 31, (int)(ivs >> 10) & 31 };
-                        int hit = (int)((((ivs >> 16) & 1) + (((ivs >> 21) & 1) * 2) + (((ivs >> 26) & 1) * 4) + (((ivs >> 0) & 1) * 8) + (((ivs >> 5) & 1) * 16) + (((ivs >> 10) & 1) * 32)) * 15) / 63;
-                        int hip = (int)(((((ivs >> 17) & 1) + (((ivs >> 22) & 1) * 2) + (((ivs >> 27) & 1) * 4) + (((ivs >> 1) & 1) * 8) + (((ivs >> 6) & 1) * 16) + (((ivs >> 11) & 1) * 32)) * 40) / 63) + 30;
+                        int hit = (int)((((ivs >> 16) & 1) + (((ivs >> 21) & 1) << 1) + (((ivs >> 26) & 1) << 2) + (((ivs >> 0) & 1) << 3) + (((ivs >> 5) & 1) << 4) + (((ivs >> 10) & 1) << 5)) * 15) / 63;
+                        int hip = (int)(((((ivs >> 17) & 1) + (((ivs >> 22) & 1) << 1) + (((ivs >> 27) & 1) << 2) + (((ivs >> 1) & 1) << 3) + (((ivs >> 6) & 1) << 4) + (((ivs >> 11) & 1) << 5)) * 40) / 63) + 30;
 
                         if ( // Begin Failure Conditions
                             iva[0] < minhp ||
@@ -414,7 +414,7 @@ namespace Eligor
                                 gender = "Genderless: ";
                                 gv = 2;
                             }
-                            else if (pid % 256 > target_gender)
+                            else if (pid & 255 > target_gender)
                             {
                                 gender = "Male: ";
                                 gv = 0;
@@ -426,7 +426,7 @@ namespace Eligor
                             }
 
                             uint nat = pid % 25;
-                            uint gen = pid % 256;
+                            uint gen = pid & 255;
                             int ivm = iva.Max();
                             int charaslot = (int)(pid % 6);
                             int tiebreaker = 0;
@@ -452,17 +452,17 @@ namespace Eligor
 
                             if (bw == 0)
                             {
-                                gender = gender + (pid % 256).ToString();
+                                gender = gender + (pid & 255).ToString();
                                 //Safety Frames
                                 if ((patnum > 0) && (minsafeframes < 1))
                                 {
                                     rollback = ((origseed * 0xb9b33155) + 0xa170f641) & 0xFFFFFFFF;
                                     i = 1;
                                     tpid = GetPID(rollback);
-                                    if (!(((pat_sex[0] == "m" && tpid % 256 > pat_gender[0]) || ((pat_sex[0] == "f" || pat_sex[0] == "g") && (tpid % 256 <= pat_gender[0]))) && ((pat_nature[0] == pid % 25) || (pat_nature[0] > 24)) && !(tsid == ((tpid >> 16 ^ pid & 0xFFFF) >> 3) && enableshiny == 1)))
+                                    if (!(((pat_sex[0] == "m" && tpid & 255 > pat_gender[0]) || ((pat_sex[0] == "f" || pat_sex[0] == "g") && (tpid & 255 <= pat_gender[0]))) && ((pat_nature[0] == pid % 25) || (pat_nature[0] > 24)) && !(tsid == ((tpid >> 16 ^ pid & 0xFFFF) >> 3) && enableshiny == 1)))
                                     {
                                         safety = "0:" + rollback.ToString("X8");
-                                        while (!(((pat_sex[0] == "m" && tpid % 256 > pat_gender[0]) || ((pat_sex[0] == "f" || pat_sex[0] == "g") && (tpid % 256 <= pat_gender[0]))) && (pat_nature[0] == tpid % 25) && !(tsid == ((tpid >> 16 ^ pid & 0xFFFF) >> 3) && enableshiny == 1)))
+                                        while (!(((pat_sex[0] == "m" && tpid & 255 > pat_gender[0]) || ((pat_sex[0] == "f" || pat_sex[0] == "g") && (tpid & 255 <= pat_gender[0]))) && (pat_nature[0] == tpid % 25) && !(tsid == ((tpid >> 16 ^ pid & 0xFFFF) >> 3) && enableshiny == 1)))
                                         {
                                             rollback = ((rollback * 0xb9b33155) + 0xa170f641) & 0xFFFFFFFF;
                                             safety = "-" + i.ToString() + ":" + rollback.ToString("X8") + ";" + safety;
@@ -534,7 +534,7 @@ namespace Eligor
                     BeginHistory();
                     WriteOut();
                 }
-                else if (patnum > 0 && ((pat_sex[0] == "m" && pid % 256 > pat_gender[0]) || ((pat_sex[0] == "f" || pat_sex[0] == "g") && (pid % 256 <= pat_gender[0]))) && ((pat_nature[0] == pid % 25) || (pat_nature[0] > 24)))
+                else if (patnum > 0 && ((pat_sex[0] == "m" && pid & 255 > pat_gender[0]) || ((pat_sex[0] == "f" || pat_sex[0] == "g") && (pid & 255 <= pat_gender[0]))) && ((pat_nature[0] == pid % 25) || (pat_nature[0] > 24)))
                 {
                     BeginHistory();
                     if ((pat_nature[0] < 26) && (colomon == 0))
