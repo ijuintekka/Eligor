@@ -27,7 +27,7 @@ namespace Eligor
         {
             InitializeComponent();
             ComboBox1.SelectedIndex = 0;
-            NThreads.SelectedIndex = 1;
+            NThreads.SelectedIndex = 0;
             SelectGender.SelectedIndex = 2;
             local_patstring = ComboBox1.Text;
         }
