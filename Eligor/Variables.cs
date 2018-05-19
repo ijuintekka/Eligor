@@ -2655,7 +2655,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 7;
             }
 
-            if (local_patstring == "Exeggutor - Rhydon, Moltres Seen- (XD)")
+            if (local_patstring == "Exeggutor -Rhydon, Moltres Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 126;
@@ -2670,7 +2670,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 5;
             }
 
-            if (local_patstring == "Tauros - Rhydon, Moltres Seen- (XD)")
+            if (local_patstring == "Tauros -Rhydon, Moltres Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = -1;
@@ -2688,7 +2688,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 7;
             }
 
-            if (local_patstring == "Tauros - Rhydon, Moltres, Exeggutor Seen- (XD)")
+            if (local_patstring == "Tauros -Rhydon, Moltres, Exeggutor Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = -1;
@@ -2706,7 +2706,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 5;
             }
 
-            if (local_patstring == "Articuno - Rhydon, Moltres Seen- (XD)")
+            if (local_patstring == "Articuno -Rhydon, Moltres Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2727,7 +2727,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 7;
             }
 
-            if (local_patstring == "Articuno - Rhydon, Moltres, Tauros Seen- (XD)")
+            if (local_patstring == "Articuno -Rhydon, Moltres, Tauros Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2748,7 +2748,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 5;
             }
 
-            if (local_patstring == "Articuno - Rhydon, Moltres, Exeggutor Seen- (XD)")
+            if (local_patstring == "Articuno -Rhydon, Moltres, Exeggutor Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2769,7 +2769,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 7;
             }
 
-            if (local_patstring == "Articuno - Rhydon, Moltres, Exeggutor, Tauros Seen- (XD)")
+            if (local_patstring == "Articuno -Rhydon, Moltres, Exeggutor, Tauros Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2790,7 +2790,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 5;
             }
 
-            if (local_patstring == "Zapdos - Rhydon, Moltres Seen- (XD)")
+            if (local_patstring == "Zapdos -Rhydon, Moltres Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2814,7 +2814,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 7;
             }
 
-            if (local_patstring == "Zapdos - Rhydon, Moltres, Tauros Seen- (XD)")
+            if (local_patstring == "Zapdos -Rhydon, Moltres, Tauros Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2838,7 +2838,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 7;
             }
 
-            if (local_patstring == "Zapdos - Rhydon, Moltres, Articuno Seen- (XD)")
+            if (local_patstring == "Zapdos -Rhydon, Moltres, Articuno Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2862,7 +2862,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 5;
             }
 
-            if (local_patstring == "Zapdos - Rhydon, Moltres, Exeggutor Seen- (XD)")
+            if (local_patstring == "Zapdos -Rhydon, Moltres, Exeggutor Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2886,7 +2886,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 7;
             }
 
-            if (local_patstring == "Zapdos - Rhydon, Moltres, Tauros, Articuno Seen- (XD)")
+            if (local_patstring == "Zapdos -Rhydon, Moltres, Tauros, Articuno Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2910,7 +2910,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 5;
             }
 
-            if (local_patstring == "Zapdos - Rhydon, Moltres, Exeggutor, Tauros Seen- (XD)")
+            if (local_patstring == "Zapdos -Rhydon, Moltres, Exeggutor, Tauros Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2934,7 +2934,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 7;
             }
 
-            if (local_patstring == "Zapdos - Rhydon, Moltres, Exeggutor, Articuno Seen- (XD)")
+            if (local_patstring == "Zapdos -Rhydon, Moltres, Exeggutor, Articuno Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
@@ -2958,7 +2958,7 @@ namespace Eligor
                 local_minsafeframes = local_minsafeframes + 5;
             }
 
-            if (local_patstring == "Zapdos - Rhydon, Moltres, Exeggutor, Tauros, Articuno Seen- (XD)")
+            if (local_patstring == "Zapdos -Rhydon, Moltres, Exeggutor, Tauros, Articuno Seen- (XD)")
             {
                 //Shadow Gender Threshold
                 local_target_gender = 256;
