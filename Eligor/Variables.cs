@@ -93,9 +93,12 @@ namespace Eligor
 
                 //Number of pokemon before Shadow
                 local_patnum = 0;
+            }
 
+            if (local_patstring == "Eevee (XD)" || local_patstring == "Espeon (Colosseum)" || local_patstring == "Umbreon (Colosseum)")
+            {
                 ETID_Check.Enabled = true;
-                ETID_Val.Enabled = true; 
+                ETID_Val.Enabled = true;
             }
             else
             {
@@ -3186,8 +3189,6 @@ namespace Eligor
             {
                 PT.Checked = false;
                 PT.Enabled = false;
-                ETID_Check.Enabled = true;
-                ETID_Val.Enabled = true;
             }
             else
             {
