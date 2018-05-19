@@ -3493,7 +3493,11 @@ namespace Eligor
                     {
                         Spread.defaultresults = 4294967295;
                     }
-                    Spread.defaultseed = uint.Parse(InitialSeed.Text, System.Globalization.NumberStyles.AllowHexSpecifier);
+                    if (InitialSeed.Text.Length < 1) { Spread.defaultseed = 0; }
+                    else
+                    {
+                        Spread.defaultseed = uint.Parse(InitialSeed.Text, System.Globalization.NumberStyles.AllowHexSpecifier);
+                    }
                     Spread.minhp = (uint)HP_Min.Value;
                     Spread.maxhp = (uint)HP_Max.Value;
                     Spread.minatk = (uint)ATK_Min.Value;
