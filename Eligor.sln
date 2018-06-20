@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27703.2026
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eligor", "Eligor\Eligor.csproj", "{A471B34E-ED20-4A7B-A897-2E37857ACB0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Eligor", "Eligor\Eligor.csproj", "{56737F2C-7E94-4502-B32E-0E7012683093}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{A471B34E-ED20-4A7B-A897-2E37857ACB0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A471B34E-ED20-4A7B-A897-2E37857ACB0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A471B34E-ED20-4A7B-A897-2E37857ACB0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A471B34E-ED20-4A7B-A897-2E37857ACB0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56737F2C-7E94-4502-B32E-0E7012683093}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56737F2C-7E94-4502-B32E-0E7012683093}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56737F2C-7E94-4502-B32E-0E7012683093}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56737F2C-7E94-4502-B32E-0E7012683093}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {C812689E-825D-41A5-B965-9EBF437FC7CC}
+		SolutionGuid = {559A1879-5ED9-4824-BBC1-29140915D075}
 	EndGlobalSection
 EndGlobal
