@@ -2863,7 +2863,6 @@ namespace Eligor
             if (ETID_Check.Checked == true) { StarterTID[0] = 1; StarterTID[1] = (uint)ETID_Val.Value; } else { StarterTID[0] = 0; }
             MustBeShiny = ShinyOnly.Checked;
             switch ((string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"]) { case string p when (p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)"): IsStarter = true; break; }
-            //maxseed = startseed + 1000; //remove
             DataGridView1.Columns.Clear();
             DataGridView1.Columns.Add("EncounterSeed", "Encounter Seed");
             if (IsStarter == true) { DataGridView1.Columns.Add("StarterTID", "Trainer ID"); DataGridView1.Columns.Add("StarterSID", "Secret ID"); }
