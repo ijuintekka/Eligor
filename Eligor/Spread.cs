@@ -124,7 +124,7 @@ namespace Eligor
             Line = string.Join(",",Line,
             (PokemonSeed).ToString("X8"),
             (PID[0]).ToString("X8")
-            ); if (IsReRoll[0] > 0) { Line = $"{Line}*ReRoll={IsReRoll[0]}"; IsReRoll[0] = 0; } Line = string.Join(",",Line,
+            ); if (IsReRoll[0] > 0) { Line = $"{Line}*ReRoll={IsReRoll[0]}"; } Line = string.Join(",",Line,
             ReRollTSV,
             NatureText[Nature[0]],
             Gender[0],
@@ -142,7 +142,7 @@ namespace Eligor
                 for (uint i = 1; i <= HasLock; i++)
                 {
                     Line = $"{Line},{(string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Species"]}:{PID[i]:X8}";
-                    if (IsReRoll[i] > 0) { Line = $"{Line}*ReRoll={IsReRoll[i]}"; IsReRoll[i] = 0; }
+                    if (IsReRoll[i] > 0) { Line = $"{Line}*ReRoll={IsReRoll[i]}"; }
                 }
             }
             if (RunSilent == false)
@@ -274,6 +274,7 @@ namespace Eligor
                         {
                             ReRollTSV = TrainerShinyValue.ToString();
                         }
+                        IsReRoll[i] = 0;
                         while ((Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || ((AllowShiny == 0 && PokemonShinyValue[i] == TrainerShinyValue))) && Halt == 0)
                         {
                             tempseed = RNGAdv(tempseed, 2);
@@ -392,6 +393,7 @@ namespace Eligor
                             {
                                 ReRollTSV = TrainerShinyValue.ToString();
                             }
+                            IsReRoll[0] = 0;
                             while ((AllowShiny == 0 && PokemonShinyValue[0] == TrainerShinyValue) || (IsStarter == true && AllowShiny == 0 && GetGender(PID[0], 31) == "Female"))
                             {
                                 tempseed = RNGAdv(tempseed, 2);
