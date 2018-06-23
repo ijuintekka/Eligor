@@ -405,12 +405,12 @@ namespace Eligor
                             {
                                 Halt = 1;
                             }
-                            else if (AllowShiny == 1 && PokemonShinyValue[0] == TrainerShinyValue)
-                            {
-                                ReRollTSV = TrainerShinyValue.ToString();
-                            }
                             else
                             {
+                                if (AllowShiny == 1 && PokemonShinyValue[0] == TrainerShinyValue)
+                                {
+                                    ReRollTSV = TrainerShinyValue.ToString();
+                                }
                                 Nature[0] = GetNature(PID[0]);
                                 if ( // Begin Failure Conditions
                                 Selected_Nature[Nature[0]] == 0
