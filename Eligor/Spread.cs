@@ -346,15 +346,15 @@ namespace Eligor
                     IVs[0] < MIN_HP_IV ||
                     IVs[1] < MIN_Attack_IV ||
                     IVs[2] < MIN_Defense_IV ||
-                    IVs[3] < MIN_Special_Attack_IV ||
-                    IVs[4] < MIN_Special_Defense_IV ||
-                    IVs[5] < MIN_Speed_IV ||
+                    IVs[4] < MIN_Special_Attack_IV ||
+                    IVs[5] < MIN_Special_Defense_IV ||
+                    IVs[3] < MIN_Speed_IV ||
                     IVs[0] > MAX_HP_IV ||
                     IVs[1] > MAX_Attack_IV ||
                     IVs[2] > MAX_Defense_IV ||
-                    IVs[3] > MAX_Special_Attack_IV ||
-                    IVs[4] > MAX_Special_Defense_IV ||
-                    IVs[5] > MAX_Speed_IV ||
+                    IVs[4] > MAX_Special_Attack_IV ||
+                    IVs[5] > MAX_Special_Defense_IV ||
+                    IVs[3] > MAX_Speed_IV ||
                     IVs.Sum() > MAX_IV_Sum ||
                     IVs.Sum() < MIN_IV_Sum
                 ) // End Failure Conditions
@@ -401,7 +401,7 @@ namespace Eligor
                                 PokemonShinyValue[0] = GetSV(PID[0]);
                                 IsReRoll[0]++;
                             }
-                            if (MustBeShiny == true && PokemonShinyValue[0] != TrainerShinyValue)
+                            if ((MustBeShiny == true && PokemonShinyValue[0] != TrainerShinyValue) || (EPSV_Label.Checked == true && EPSV_Val.Value != PokemonShinyValue[0]))
                             {
                                 Halt = 1;
                             }
@@ -2859,9 +2859,9 @@ namespace Eligor
             else if (P5.Checked == true) { ForceShiny = 5; }
             else { ForceShiny = 0; }
             if (InitialSeed.Text.Length < 1) { startseed = 0; } else { startseed = uint.Parse(InitialSeed.Text, System.Globalization.NumberStyles.AllowHexSpecifier); }
-            if (EnableLimit.Checked == true) { maxseed = startseed + (uint)ResultsLimit.Value; progval = (uint)ResultsLimit.Value / 100; } else { maxseed = startseed + 4294967295; progval = 42949673; }
+            if (EnableLimit.Checked == true) { maxseed = startseed + (uint)ResultsLimit.Value; progval = (uint)ResultsLimit.Value / 101; } else { maxseed = startseed + 4294967295; progval = 42524427; }
             progtick = 0;
-            if (TID_Match.Checked == true) { TSID[0] = 1; TSID[1] = ((int)TID.Value ^ (int)SID.Value) >> 3; } else if ((int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"] > -1) { TSID[0] = 1; TSID[1] = (int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"]; } else { TSID[0] = 0; }
+            if (TID_Match.Checked == true) { TSID[0] = 1; TSID[1] = (int)TSVal.Value; } else if ((int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"] > -1) { TSID[0] = 1; TSID[1] = (int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"]; } else { TSID[0] = 0; }
             if (ETID_Check.Checked == true) { StarterTID[0] = 1; StarterTID[1] = (uint)ETID_Val.Value; } else { StarterTID[0] = 0; }
             MustBeShiny = ShinyOnly.Checked;
             switch ((string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"]) { case string p when (p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)"): IsStarter = true; break; }
@@ -2898,8 +2898,8 @@ namespace Eligor
             Halt = 0;
             ProgBar.ProgressBar1.Value = 0;
             ProgBar.Cancel.Enabled = true;
-            ProgBar.Top = Top + Height / 2 - 57;
-            ProgBar.Left = Left + Width / 2 - 111;
+            ProgBar.Top = Top + (Height / 2) - 57;
+            ProgBar.Left = Left + (Width / 2) - 111;
             ProgBar.Visible = true;
             while (seedtick != maxseed && Halt != 5) { if (ProgBar.Cancel.Enabled == true) { StartSearch(); } else { Halt = 5; } seedtick++; progtick++; }
             if (Halt != 5) { StartSearch(); }
@@ -2944,7 +2944,7 @@ namespace Eligor
 
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            P1.Checked = P2.Checked = P3.Checked = P4.Checked = P5.Checked = PT.Checked = TID_Match.Checked = ETID_Check.Checked = ShinyOnly.Checked = ForceLabel.Enabled = SelectGender.Enabled = P1.Enabled = P2.Enabled = P3.Enabled = P4.Enabled = P5.Enabled = PT.Enabled = TID_Match.Enabled = ETID_Check.Enabled = ShinyOnly.Enabled = false;
+            P1.Checked = P2.Checked = P3.Checked = P4.Checked = P5.Checked = PT.Checked = TID_Match.Checked = ETID_Check.Checked = ShinyOnly.Checked = ForceLabel.Enabled = SelectGender.Enabled = P1.Enabled = P2.Enabled = P3.Enabled = P4.Enabled = P5.Enabled = PT.Enabled = TID_Match.Enabled = EPSV_Label.Enabled = ETID_Check.Enabled = ShinyOnly.Enabled = false;
             if ((uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == 0 && (string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Umbreon (Colosseum)" && (string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Espeon (Colosseum)")
             {
                 ForceLabel.Enabled = TID_Match.Enabled = PT.Enabled = true;
@@ -2982,7 +2982,7 @@ namespace Eligor
             }
             switch ((string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"])
             {
-                case string p when (p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)"): ETID_Check.Enabled = true; break;
+                case string p when (p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)"): EPSV_Label.Enabled = ETID_Check.Enabled = true; break;
             }
             if ((int)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"ShinyValue"] > -1)
             {
@@ -3006,7 +3006,7 @@ namespace Eligor
 
         private void TID_Match_CheckStateChanged(object sender, EventArgs e)
         {
-            TID.Enabled = SID.Enabled = TID_Label.Enabled = SID_Label.Enabled = TID_Match.Checked;
+            TSV_Label.Enabled = TSVal.Enabled = TID.Enabled = SID.Enabled = TID_Label.Enabled = SID_Label.Enabled = TID_Match.Checked;
         }
 
         private void ETID_Check_CheckStateChanged(object sender, EventArgs e)
@@ -3151,6 +3151,21 @@ namespace Eligor
         {
             ProgBar.ShowDialog();
             ProgBar.Visible = false;
+        }
+
+        private void TID_ValueChanged(object sender, EventArgs e)
+        {
+            TSVal.Value = ((int)TID.Value ^ (int)SID.Value) >> 3;
+        }
+
+        private void SID_ValueChanged(object sender, EventArgs e)
+        {
+            TSVal.Value = ((int)TID.Value ^ (int)SID.Value) >> 3;
+        }
+
+        private void EPSV_Label_CheckStateChanged(object sender, EventArgs e)
+        {
+            EPSV_Val.Enabled = EPSV_Label.Checked;
         }
     }
 }
