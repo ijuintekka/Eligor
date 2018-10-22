@@ -71,6 +71,10 @@ namespace Eligor
         bool RunSilent;
         bool OutputCSV;
         string date;
+        bool LeadShadow;
+        string pokemon;
+        bool EPSVFilter;
+        decimal EPSValue;
 
         private uint RNGAdv(uint tseed, uint frame)
         {
@@ -114,16 +118,16 @@ namespace Eligor
             if (IsStarter == true)
             {
                 Line = string.Join(",",
-                (EeveeSeed).ToString("X8"),EeveeTID, EeveeSID);
+                EeveeSeed.ToString("X8"),EeveeTID, EeveeSID);
             }
             else
             {
                 Line = string.Join(",",
-                (seedtick).ToString("X8"));
+                seedtick.ToString("X8"));
             }
             Line = string.Join(",",Line,
-            (PokemonSeed).ToString("X8"),
-            (PID[0]).ToString("X8")
+            PokemonSeed.ToString("X8"),
+            PID[0].ToString("X8")
             ); if (IsReRoll[0] > 0) { Line = $"{Line}*ReRoll={IsReRoll[0]}"; } Line = string.Join(",",Line,
             ReRollTSV,
             NatureText[Nature[0]],
@@ -184,7 +188,7 @@ namespace Eligor
 
         private void GetCharacteristic(uint call)
         {
-            uint charaslot = (call % 6);
+            uint charaslot = call % 6;
             uint tiebreaker = 0;
             for (uint i = 0; i < 6; i++)
             {
@@ -214,12 +218,12 @@ namespace Eligor
 
         private uint GetNature(uint call)
         {
-            return (call % 25);
+            return call % 25;
         }
 
         private uint GetSV(uint call)
         {
-            return ((call >> 16 ^ call & 0xFFFF) >> 3);
+            return (call >> 16 ^ call & 0xFFFF) >> 3;
         }
 
         private void SolveLock()
@@ -228,6 +232,11 @@ namespace Eligor
             {
                 for (uint i = 1; i <= HasLock; i++)
                 {
+                    if (LeadShadow = true && i == 2 && (Gender[2] != GetGender(PID[2] = GetPID(tempseed), GenderThreshold[2]) || Nature[2] != GetNature(PID[2])))
+                    {
+                        Halt = 1;
+                        break;
+                    }
                     if (Nature[i] == 26)
                     {
                         PokemonShinyValue[i] = PID[i] = 4294967295;
@@ -326,7 +335,7 @@ namespace Eligor
                 {
                     Halt = 1;
                 }
-                else if ((string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"] == "Espeon (Colosseum)")
+                else if (pokemon == "Espeon (Colosseum)")
                 {
                     PID[0] = GetPID(tempseed);
                     PokemonShinyValue[0] = GetSV(PID[0]);
@@ -401,7 +410,7 @@ namespace Eligor
                                 PokemonShinyValue[0] = GetSV(PID[0]);
                                 IsReRoll[0]++;
                             }
-                            if ((MustBeShiny == true && PokemonShinyValue[0] != TrainerShinyValue) || (EPSV_Label.Checked == true && EPSV_Val.Value != PokemonShinyValue[0]))
+                            if ((MustBeShiny == true && PokemonShinyValue[0] != TrainerShinyValue) || (EPSVFilter == true && EPSValue != PokemonShinyValue[0]))
                             {
                                 Halt = 1;
                             }
@@ -2041,7 +2050,7 @@ namespace Eligor
 
             Pokemon_List.Rows.Add("Snorlax (XD)",
                 31, //Gender Threshold
-                4, //Number of pokemon before Shadow
+                5, //Number of pokemon before Shadow
                 0, //1 = Shiny Allowed
                 -1, //Shiny Value
 
@@ -2062,7 +2071,7 @@ namespace Eligor
 
             Pokemon_List.Rows.Add("Snorlax -Swellow Seen- (XD)",
                 31, //Gender Threshold
-                4, //Number of pokemon before Shadow
+                5, //Number of pokemon before Shadow
                 0, //1 = Shiny Allowed
                 -1, //Shiny Value
 
@@ -2083,7 +2092,7 @@ namespace Eligor
 
             Pokemon_List.Rows.Add("Snorlax -Swellow & Electabuzz Seen- (XD)",
                 31, //Gender Threshold
-                4, //Number of pokemon before Shadow
+                5, //Number of pokemon before Shadow
                 0, //1 = Shiny Allowed
                 -1, //Shiny Value
 
@@ -2815,6 +2824,17 @@ namespace Eligor
         private void Button1_Click(object sender, EventArgs e)
         {
             BackgroundWorker1.RunWorkerAsync();
+            pokemon = (string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"];
+            if (pokemon.Contains("Snorlax") || pokemon.Contains("Electabuzz") || pokemon.Contains("Pidgeotto"))
+            {
+                LeadShadow = true;
+            }
+            else
+            {
+                LeadShadow = false;
+            }
+            EPSVFilter = EPSV_Label.Checked;
+            EPSValue = EPSV_Val.Value;
             IsStarter = Button1.Enabled = false;
             SelectedPokemon = ComboBox1.SelectedIndex;
             if (Silent.Checked == false) { RunSilent = false; } else { RunSilent = true; }
@@ -2864,7 +2884,7 @@ namespace Eligor
             if (TID_Match.Checked == true) { TSID[0] = 1; TSID[1] = (int)TSVal.Value; } else if ((int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"] > -1) { TSID[0] = 1; TSID[1] = (int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"]; } else { TSID[0] = 0; }
             if (ETID_Check.Checked == true) { StarterTID[0] = 1; StarterTID[1] = (uint)ETID_Val.Value; } else { StarterTID[0] = 0; }
             MustBeShiny = ShinyOnly.Checked;
-            switch ((string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"]) { case string p when (p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)"): IsStarter = true; break; }
+            switch (pokemon) { case string p when p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)": IsStarter = true; break; }
             DataGridView1.Columns.Clear();
             DataGridView1.Columns.Add("EncounterSeed", "Encounter Seed");
             if (IsStarter == true) { DataGridView1.Columns.Add("StarterTID", "Trainer ID"); DataGridView1.Columns.Add("StarterSID", "Secret ID"); }
