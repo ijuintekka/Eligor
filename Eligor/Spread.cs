@@ -2896,15 +2896,17 @@ namespace Eligor
             }
             Cursor = Cursors.WaitCursor;
             Halt = 0;
-            ProgBar.ProgressBar1.Value = 0;
-            ProgBar.Cancel.Enabled = true;
-            ProgBar.Top = Top + (Height / 2) - 57;
-            ProgBar.Left = Left + (Width / 2) - 111;
-            ProgBar.Visible = true;
+            ProgBar.Invoke(new Action(() => {
+                ProgBar.ProgressBar1.Value = 0;
+                ProgBar.Cancel.Enabled = true;
+                ProgBar.Top = Top + (Height / 2) - 57;
+                ProgBar.Left = Left + (Width / 2) - 111;
+                ProgBar.Visible = true;
+            } ));
             while (seedtick != maxseed && Halt != 5) { if (ProgBar.Cancel.Enabled == true) { StartSearch(); } else { Halt = 5; } seedtick++; progtick++; }
             if (Halt != 5) { StartSearch(); }
             Cursor = Cursors.Default;
-            ProgBar.Visible = false;
+            ProgBar.Invoke(new Action(() => ProgBar.Visible = false));
             Button1.Enabled = true;
         }
 
@@ -2927,7 +2929,7 @@ namespace Eligor
             }
             if (progtick == progval)
             {
-                ProgBar.ProgressBar1.PerformStep();
+                ProgBar.Invoke(new Action(() => ProgBar.ProgressBar1.PerformStep()));
                 progtick = 0;
             }
         }

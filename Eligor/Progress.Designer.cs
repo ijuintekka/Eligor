@@ -85,8 +85,8 @@
         }
 
         #endregion
-        public System.Windows.Forms.ProgressBar ProgressBar1;
         private System.Windows.Forms.ProgressBar ProgressBar2;
+        public System.Windows.Forms.ProgressBar ProgressBar1;
         public System.Windows.Forms.Button Cancel;
     }
 }
