@@ -77,9 +77,13 @@
             this.IVMinLabel = new System.Windows.Forms.LinkLabel();
             this.IVMaxLabel = new System.Windows.Forms.LinkLabel();
             this.GroupBox2 = new System.Windows.Forms.GroupBox();
-            this.ShinyOnly = new System.Windows.Forms.CheckBox();
+            this.EPSV_Val = new System.Windows.Forms.NumericUpDown();
+            this.EPSV_Label = new System.Windows.Forms.CheckBox();
+            this.TSV_Label = new System.Windows.Forms.Label();
+            this.TSVal = new System.Windows.Forms.NumericUpDown();
             this.ETID_Val = new System.Windows.Forms.NumericUpDown();
             this.ETID_Check = new System.Windows.Forms.CheckBox();
+            this.ShinyOnly = new System.Windows.Forms.CheckBox();
             this.Silent = new System.Windows.Forms.CheckBox();
             this.InitialSeed = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
@@ -97,10 +101,7 @@
             this.HIDMaxLabel = new System.Windows.Forms.LinkLabel();
             this.GenderLabel = new System.Windows.Forms.Label();
             this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.TSVal = new System.Windows.Forms.NumericUpDown();
-            this.TSV_Label = new System.Windows.Forms.Label();
-            this.EPSV_Label = new System.Windows.Forms.CheckBox();
-            this.EPSV_Val = new System.Windows.Forms.NumericUpDown();
+            this.VersionLabel = new System.Windows.Forms.Label();
             this.CharacteristicComboBox = new CheckComboBox.CheckedComboBox();
             this.HiddenPowerComboBox = new CheckComboBox.CheckedComboBox();
             this.NatureComboBox = new CheckComboBox.CheckedComboBox();
@@ -125,11 +126,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.TID)).BeginInit();
             this.GroupBox1.SuspendLayout();
             this.GroupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EPSV_Val)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TSVal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ETID_Val)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ResultsLimit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TSVal)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EPSV_Val)).BeginInit();
             this.SuspendLayout();
             // 
             // Button1
@@ -553,7 +554,7 @@
             // 
             this.PT.AutoSize = true;
             this.PT.Enabled = false;
-            this.PT.Location = new System.Drawing.Point(69, 131);
+            this.PT.Location = new System.Drawing.Point(70, 131);
             this.PT.Margin = new System.Windows.Forms.Padding(2);
             this.PT.Name = "PT";
             this.PT.Size = new System.Drawing.Size(57, 17);
@@ -591,7 +592,7 @@
             // 
             this.P5.AutoSize = true;
             this.P5.Enabled = false;
-            this.P5.Location = new System.Drawing.Point(37, 131);
+            this.P5.Location = new System.Drawing.Point(38, 131);
             this.P5.Name = "P5";
             this.P5.Size = new System.Drawing.Size(32, 17);
             this.P5.TabIndex = 84;
@@ -603,7 +604,7 @@
             // 
             this.P4.AutoSize = true;
             this.P4.Enabled = false;
-            this.P4.Location = new System.Drawing.Point(5, 131);
+            this.P4.Location = new System.Drawing.Point(6, 131);
             this.P4.Margin = new System.Windows.Forms.Padding(2);
             this.P4.Name = "P4";
             this.P4.Size = new System.Drawing.Size(32, 17);
@@ -616,7 +617,7 @@
             // 
             this.P3.AutoSize = true;
             this.P3.Enabled = false;
-            this.P3.Location = new System.Drawing.Point(69, 113);
+            this.P3.Location = new System.Drawing.Point(70, 113);
             this.P3.Margin = new System.Windows.Forms.Padding(2);
             this.P3.Name = "P3";
             this.P3.Size = new System.Drawing.Size(32, 17);
@@ -629,7 +630,7 @@
             // 
             this.P2.AutoSize = true;
             this.P2.Enabled = false;
-            this.P2.Location = new System.Drawing.Point(37, 113);
+            this.P2.Location = new System.Drawing.Point(38, 113);
             this.P2.Margin = new System.Windows.Forms.Padding(2);
             this.P2.Name = "P2";
             this.P2.Size = new System.Drawing.Size(32, 17);
@@ -642,7 +643,7 @@
             // 
             this.P1.AutoSize = true;
             this.P1.Enabled = false;
-            this.P1.Location = new System.Drawing.Point(5, 113);
+            this.P1.Location = new System.Drawing.Point(6, 113);
             this.P1.Margin = new System.Windows.Forms.Padding(2);
             this.P1.Name = "P1";
             this.P1.Size = new System.Drawing.Size(32, 17);
@@ -808,16 +809,53 @@
             this.GroupBox2.TabIndex = 91;
             this.GroupBox2.TabStop = false;
             // 
-            // ShinyOnly
+            // EPSV_Val
             // 
-            this.ShinyOnly.AutoSize = true;
-            this.ShinyOnly.Enabled = false;
-            this.ShinyOnly.Location = new System.Drawing.Point(6, 153);
-            this.ShinyOnly.Name = "ShinyOnly";
-            this.ShinyOnly.Size = new System.Drawing.Size(76, 17);
-            this.ShinyOnly.TabIndex = 106;
-            this.ShinyOnly.Text = "Shiny Only";
-            this.ShinyOnly.UseVisualStyleBackColor = true;
+            this.EPSV_Val.Enabled = false;
+            this.EPSV_Val.Location = new System.Drawing.Point(68, 196);
+            this.EPSV_Val.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.EPSV_Val.Name = "EPSV_Val";
+            this.EPSV_Val.Size = new System.Drawing.Size(64, 20);
+            this.EPSV_Val.TabIndex = 110;
+            // 
+            // EPSV_Label
+            // 
+            this.EPSV_Label.AutoSize = true;
+            this.EPSV_Label.Location = new System.Drawing.Point(15, 197);
+            this.EPSV_Label.Name = "EPSV_Label";
+            this.EPSV_Label.Size = new System.Drawing.Size(50, 17);
+            this.EPSV_Label.TabIndex = 109;
+            this.EPSV_Label.Text = "PSV:";
+            this.EPSV_Label.UseVisualStyleBackColor = true;
+            this.EPSV_Label.CheckStateChanged += new System.EventHandler(this.EPSV_Label_CheckStateChanged);
+            // 
+            // TSV_Label
+            // 
+            this.TSV_Label.AutoSize = true;
+            this.TSV_Label.Enabled = false;
+            this.TSV_Label.Location = new System.Drawing.Point(36, 78);
+            this.TSV_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.TSV_Label.Name = "TSV_Label";
+            this.TSV_Label.Size = new System.Drawing.Size(31, 13);
+            this.TSV_Label.TabIndex = 108;
+            this.TSV_Label.Text = "TSV:";
+            // 
+            // TSVal
+            // 
+            this.TSVal.Enabled = false;
+            this.TSVal.Location = new System.Drawing.Point(68, 75);
+            this.TSVal.Maximum = new decimal(new int[] {
+            8191,
+            0,
+            0,
+            0});
+            this.TSVal.Name = "TSVal";
+            this.TSVal.Size = new System.Drawing.Size(64, 20);
+            this.TSVal.TabIndex = 107;
             // 
             // ETID_Val
             // 
@@ -842,6 +880,17 @@
             this.ETID_Check.Text = "TID:";
             this.ETID_Check.UseVisualStyleBackColor = true;
             this.ETID_Check.CheckStateChanged += new System.EventHandler(this.ETID_Check_CheckStateChanged);
+            // 
+            // ShinyOnly
+            // 
+            this.ShinyOnly.AutoSize = true;
+            this.ShinyOnly.Enabled = false;
+            this.ShinyOnly.Location = new System.Drawing.Point(6, 153);
+            this.ShinyOnly.Name = "ShinyOnly";
+            this.ShinyOnly.Size = new System.Drawing.Size(76, 17);
+            this.ShinyOnly.TabIndex = 106;
+            this.ShinyOnly.Text = "Shiny Only";
+            this.ShinyOnly.UseVisualStyleBackColor = true;
             // 
             // Silent
             // 
@@ -1024,53 +1073,14 @@
             // 
             this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork_1);
             // 
-            // TSVal
+            // VersionLabel
             // 
-            this.TSVal.Enabled = false;
-            this.TSVal.Location = new System.Drawing.Point(68, 75);
-            this.TSVal.Maximum = new decimal(new int[] {
-            8191,
-            0,
-            0,
-            0});
-            this.TSVal.Name = "TSVal";
-            this.TSVal.Size = new System.Drawing.Size(64, 20);
-            this.TSVal.TabIndex = 107;
-            // 
-            // TSV_Label
-            // 
-            this.TSV_Label.AutoSize = true;
-            this.TSV_Label.Enabled = false;
-            this.TSV_Label.Location = new System.Drawing.Point(36, 78);
-            this.TSV_Label.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.TSV_Label.Name = "TSV_Label";
-            this.TSV_Label.Size = new System.Drawing.Size(31, 13);
-            this.TSV_Label.TabIndex = 108;
-            this.TSV_Label.Text = "TSV:";
-            // 
-            // EPSV_Label
-            // 
-            this.EPSV_Label.AutoSize = true;
-            this.EPSV_Label.Location = new System.Drawing.Point(15, 197);
-            this.EPSV_Label.Name = "EPSV_Label";
-            this.EPSV_Label.Size = new System.Drawing.Size(50, 17);
-            this.EPSV_Label.TabIndex = 109;
-            this.EPSV_Label.Text = "PSV:";
-            this.EPSV_Label.UseVisualStyleBackColor = true;
-            this.EPSV_Label.CheckStateChanged += new System.EventHandler(this.EPSV_Label_CheckStateChanged);
-            // 
-            // EPSV_Val
-            // 
-            this.EPSV_Val.Enabled = false;
-            this.EPSV_Val.Location = new System.Drawing.Point(68, 196);
-            this.EPSV_Val.Maximum = new decimal(new int[] {
-            65535,
-            0,
-            0,
-            0});
-            this.EPSV_Val.Name = "EPSV_Val";
-            this.EPSV_Val.Size = new System.Drawing.Size(64, 20);
-            this.EPSV_Val.TabIndex = 110;
+            this.VersionLabel.AutoSize = true;
+            this.VersionLabel.Location = new System.Drawing.Point(504, 242);
+            this.VersionLabel.Name = "VersionLabel";
+            this.VersionLabel.Size = new System.Drawing.Size(63, 13);
+            this.VersionLabel.TabIndex = 112;
+            this.VersionLabel.Text = "Version 1.2.";
             // 
             // CharacteristicComboBox
             // 
@@ -1125,6 +1135,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 400);
+            this.Controls.Add(this.VersionLabel);
             this.Controls.Add(this.GenderLabel);
             this.Controls.Add(this.NatureLabel);
             this.Controls.Add(this.HiddenPowerLabel);
@@ -1181,11 +1192,11 @@
             this.GroupBox1.PerformLayout();
             this.GroupBox2.ResumeLayout(false);
             this.GroupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.EPSV_Val)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.TSVal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ETID_Val)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ResultsLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.TSVal)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.EPSV_Val)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1266,6 +1277,7 @@
         private System.Windows.Forms.NumericUpDown TSVal;
         private System.Windows.Forms.NumericUpDown EPSV_Val;
         private System.Windows.Forms.CheckBox EPSV_Label;
+        private System.Windows.Forms.Label VersionLabel;
     }
 }
 

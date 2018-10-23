@@ -156,7 +156,7 @@ namespace Eligor
             }
             if (OutputCSV == true)
             {
-                System.IO.File.AppendAllText("Results(" + (string)Pokemon_List.Rows[SelectedPokemon][$"Pokemon"] + ") " + date + ".csv", Line + "\r");
+                System.IO.File.AppendAllText("Results(" + pokemon + ") " + date + ".csv", Line + "\r");
             }
         }
 
@@ -2912,7 +2912,7 @@ namespace Eligor
                 {
                     Line = Line + "," + DataGridView1.Columns[i].Name;
                 }
-                System.IO.File.AppendAllText("Results(" + (string)Pokemon_List.Rows[SelectedPokemon][$"Pokemon"] + ") " + date + ".csv", Line + "\r" + (string)Pokemon_List.Rows[SelectedPokemon][$"Pokemon"] + "\r");
+                System.IO.File.AppendAllText("Results(" + pokemon + ") " + date + ".csv", Line + "\r" + pokemon + "\r");
             }
             Cursor = Cursors.WaitCursor;
             Halt = 0;
