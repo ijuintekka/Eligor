@@ -666,7 +666,7 @@ namespace Eligor
                 "Female", 6, 191,
 
                 "Shroomish", //Pokemon 3, Bashful, Male
-                "Female", 18, 127);
+                "Male", 18, 127);
 
             Pokemon_List.Rows.Add("Stantler (Colosseum)",
                 127, //Gender Threshold
@@ -705,7 +705,7 @@ namespace Eligor
                 "Female", 12, 127,
 
                 "Houndour", //Pokemon 3, Bashful, Male
-                "Female", 18, 127);
+                "Male", 18, 127);
 
             Pokemon_List.Rows.Add("Forretress (Colosseum)",
                 127, //Gender Threshold
@@ -816,10 +816,10 @@ namespace Eligor
                 -1, //Shiny Value
 
                 "Machoke", //Pokemon 1, Calm, Female
-                "Male", 20, 63,
+                "Female", 20, 63,
 
                 "Marshtomp", //Pokemon 2, Mild, Male
-                "Female", 16, 31,
+                "Male", 16, 31,
 
                 "Shiftry", //Pokemon 3, Gentle, Female
                 "Female", 21, 127);
@@ -1716,13 +1716,13 @@ namespace Eligor
                 -1, //Shiny Value
 
                 "Electrode", //Pokemon 1, Hardy, Genderless
-                "Genderless", 18, 127,
+                "Genderless", 0, 256,
 
                 "Misdreavus", //Pokemon 2, Bashful, Female
-                "Female", 25, 256,
+                "Female", 18, 127,
 
                 "Claydol", //Pokemon 3, Serious, Genderless
-                "Genderless", 18, 127);
+                "Genderless", 12, 256);
 
             Pokemon_List.Rows.Add("Banette (XD)",
                 127, //Gender Threshold
@@ -1731,13 +1731,13 @@ namespace Eligor
                 -1, //Shiny Value
 
                 "Electrode", //Pokemon 1, Hardy, Genderless
-                "Genderless", 18, 127,
+                "Genderless", 0, 256,
 
                 "Misdreavus", //Pokemon 2, Bashful, Female
-                "Female", 25, 256,
+                "Female", 18, 127,
 
                 "Claydol", //Pokemon 3, Serious, Genderless
-                "Genderless", 18, 127,
+                "Genderless", 12, 256,
 
                 "Shadow Kangaskhan", //Pokemon 4, Shadow
                 "Genderless", 25, 256);
@@ -1749,13 +1749,13 @@ namespace Eligor
                 -1, //Shiny Value
 
                 "Electrode", //Pokemon 1, Hardy, Genderless
-                "Genderless", 18, 127,
+                "Genderless", 0, 256,
 
                 "Misdreavus", //Pokemon 2, Bashful, Female
-                "Female", 25, 256,
+                "Female", 18, 127,
 
                 "Claydol", //Pokemon 3, Serious, Genderless
-                "Genderless", 18, 127,
+                "Genderless", 12, 256,
 
                 "Shadow Kangaskhan", //Pokemon 4, Shadow -Seen-
                 "Genderless", 26, 256);
@@ -1917,7 +1917,7 @@ namespace Eligor
                 "Female", 6, 127,
 
                 "Exploud", //Pokemon 2, Quirky, Male
-                "Male", 24, 256);
+                "Male", 24, 127);
 
             Pokemon_List.Rows.Add("Chansey (XD)",
                 255, //Gender Threshold
@@ -1929,7 +1929,7 @@ namespace Eligor
                 "Female", 6, 127,
 
                 "Exploud", //Pokemon 2, Quirky, Male
-                "Male", 24, 256,
+                "Male", 24, 127,
 
                 "Shadow Scyther", //Pokemon 3, Shadow
                 "Genderless", 25, 256);
@@ -1944,7 +1944,7 @@ namespace Eligor
                 "Female", 6, 127,
 
                 "Exploud", //Pokemon 2, Quirky, Male
-                "Male", 24, 256,
+                "Male", 24, 127,
 
                 "Shadow Scyther", //Pokemon 3, Shadow -Seen-
                 "Genderless", 26, 256);
@@ -2184,10 +2184,10 @@ namespace Eligor
                 "Male", 18, 127,
 
                 "Breloom", //Pokemon 3, Docile, Female
-                "Male", 6, 127,
+                "Female", 6, 127,
 
                 "Donphan", //Pokemon 4, Serious, Male
-                "Female", 12, 127);
+                "Male", 12, 127);
 
             Pokemon_List.Rows.Add("Manectric (XD)",
                 127, //Gender Threshold
