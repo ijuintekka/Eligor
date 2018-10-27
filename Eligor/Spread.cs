@@ -50,7 +50,7 @@ namespace Eligor
         uint MIN_HiddenPowerStrength;
         uint HasLock;
         uint[] Nature = { 0, 0, 0, 0, 0, 0, 0 };
-        string[] Gender = { "", "", "", "", "", "", "" };
+        string[] Gender = { "", "", "", "", "", ""};
         uint[] GenderThreshold = { 0, 0, 0, 0, 0, 0, 0 };
         uint[] PokemonShinyValue = { 0, 0, 0, 0, 0, 0, 0 };
         uint[] IsReRoll = { 0, 0, 0, 0, 0, 0, 0 };
@@ -70,11 +70,10 @@ namespace Eligor
         string ReRollTSV;
         bool RunSilent;
         bool OutputCSV;
-        string date;
+        string Date;
         bool LeadShadow;
-        string[] Pokemon = { "", "", "", "", "", "", "" };
-        bool EPSVFilter;
-        decimal EPSValue;
+        string[] Pokemon = { "", "", "", "", "", ""};
+        decimal[] EPSV = { 0, 0 };
 
         private uint RNGAdv(uint tseed, uint frame)
         {
@@ -156,7 +155,7 @@ namespace Eligor
             }
             if (OutputCSV == true)
             {
-                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + date + ".csv", Line + "\r");
+                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + Date + ".csv", Line + "\r");
             }
         }
 
@@ -410,7 +409,7 @@ namespace Eligor
                                 PokemonShinyValue[0] = GetSV(PID[0]);
                                 IsReRoll[0]++;
                             }
-                            if ((MustBeShiny == true && PokemonShinyValue[0] != TrainerShinyValue) || (EPSVFilter == true && EPSValue != PokemonShinyValue[0]))
+                            if ((MustBeShiny == true && PokemonShinyValue[0] != TrainerShinyValue) || (EPSV[0] == 1 && EPSV[1] != PokemonShinyValue[0]))
                             {
                                 Halt = 1;
                             }
@@ -2826,16 +2825,8 @@ namespace Eligor
             BackgroundWorker1.RunWorkerAsync();
             SelectedPokemon = ComboBox1.SelectedIndex;
             Pokemon[0] = (string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"];
-            if (Pokemon[0].Contains("Snorlax") || Pokemon[0].Contains("Electabuzz") || Pokemon[0].Contains("Pidgeotto"))
-            {
-                LeadShadow = true;
-            }
-            else
-            {
-                LeadShadow = false;
-            }
-            EPSVFilter = EPSV_Label.Checked;
-            EPSValue = EPSV_Val.Value;
+            if (Pokemon[0].Contains("Snorlax") || Pokemon[0].Contains("Electabuzz") || Pokemon[0].Contains("Pidgeotto")) { LeadShadow = true; } else { LeadShadow = false; }
+            if (EPSV_Label.Checked == true) { EPSV[0] = 1; EPSV[1] = EPSV_Val.Value; } else { EPSV[0] = 0; }
             IsStarter = Button1.Enabled = false;
             if (Silent.Checked == false) { RunSilent = false; } else { RunSilent = true; }
             if (CSV.Checked == false) { OutputCSV = false; } else { OutputCSV = true; }
@@ -2907,13 +2898,13 @@ namespace Eligor
             Seedtick = Startseed;
             if (OutputCSV == true)
             {
-                date = DateTime.Now.ToString("yyyyMMddhhmmss");
+                Date = DateTime.Now.ToString("yyyyMMddhhmmss");
                 string Line = DataGridView1.Columns[0].Name;
                 for (int i = 1; i < DataGridView1.ColumnCount; i++)
                 {
                     Line = Line + "," + DataGridView1.Columns[i].Name;
                 }
-                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + date + ".csv", Line + "\r" + Pokemon[0] + "\r");
+                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + Date + ".csv", Line + "\r" + Pokemon[0] + "\r");
             }
             Cursor = Cursors.WaitCursor;
             Halt = 0;
