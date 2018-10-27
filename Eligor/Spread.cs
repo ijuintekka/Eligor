@@ -49,11 +49,11 @@ namespace Eligor
         uint MAX_HiddenPowerStrength;
         uint MIN_HiddenPowerStrength;
         uint HasLock;
-        uint[] Nature = { 0, 0, 0, 0, 0, 0, 0 };
-        string[] Gender = { "", "", "", "", "", ""};
-        uint[] GenderThreshold = { 0, 0, 0, 0, 0, 0, 0 };
-        uint[] PokemonShinyValue = { 0, 0, 0, 0, 0, 0, 0 };
-        uint[] IsReRoll = { 0, 0, 0, 0, 0, 0, 0 };
+        uint[] Nature = { 0, 0, 0, 0, 0, 0 };
+        string[] Gender = { "", "", "", "", "", "" };
+        uint[] GenderThreshold = { 0, 0, 0, 0, 0, 0 };
+        uint[] PokemonShinyValue = { 0, 0, 0, 0, 0, 0 };
+        uint[] IsReRoll = { 0, 0, 0, 0, 0, 0 };
         uint TrainerShinyValue;
         int[] TSID = { 0, 0 };
         uint AllowShiny;
@@ -72,7 +72,7 @@ namespace Eligor
         bool OutputCSV;
         string Date;
         bool LeadShadow;
-        string[] Pokemon = { "", "", "", "", "", ""};
+        string[] Pokemon = { "", "", "", "", "", "" };
         decimal[] EPSV = { 0, 0 };
 
         private uint RNGAdv(uint tseed, uint frame)
@@ -251,7 +251,7 @@ namespace Eligor
                         }
                         if (i > 1)
                         {
-                            while (Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || ((AllowShiny == 0 && PokemonShinyValue[i] == TrainerShinyValue)))
+                            while (Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || (AllowShiny == 0 && PokemonShinyValue[i] == TrainerShinyValue))
                             {
                                 Tempseed = RNGAdv(Tempseed, 2);
                                 PID[i] = GetPID(Tempseed);
@@ -283,7 +283,7 @@ namespace Eligor
                             ReRollTSV = TrainerShinyValue.ToString();
                         }
                         IsReRoll[i] = 0;
-                        while ((Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || ((AllowShiny == 0 && PokemonShinyValue[i] == TrainerShinyValue))) && Halt == 0)
+                        while ((Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || (AllowShiny == 0 && PokemonShinyValue[i] == TrainerShinyValue)) && Halt == 0)
                         {
                             Tempseed = RNGAdv(Tempseed, 2);
                             PID[i] = GetPID(Tempseed);
@@ -509,7 +509,7 @@ namespace Eligor
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Makuhita (Colosseum)",
-            63, //Gender Threshold
+                63, //Gender Threshold
                 2, //Number of pokemon before Shadow
                 1, //1 = Shiny Allowed
                 -1, //Shiny Value
