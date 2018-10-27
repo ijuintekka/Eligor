@@ -814,7 +814,7 @@
             this.EPSV_Val.Enabled = false;
             this.EPSV_Val.Location = new System.Drawing.Point(68, 196);
             this.EPSV_Val.Maximum = new decimal(new int[] {
-            65535,
+            8191,
             0,
             0,
             0});
@@ -990,6 +990,7 @@
             this.label25.Size = new System.Drawing.Size(198, 13);
             this.label25.TabIndex = 100;
             this.label25.Text = "Pokémon Colosseum/XD Spread Finder.";
+            this.label25.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             // 
             // label26
             // 
@@ -1080,7 +1081,8 @@
             this.VersionLabel.Name = "VersionLabel";
             this.VersionLabel.Size = new System.Drawing.Size(63, 13);
             this.VersionLabel.TabIndex = 112;
-            this.VersionLabel.Text = "Version 1.2.";
+            this.VersionLabel.Text = "Version 1.4.";
+            this.VersionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // CharacteristicComboBox
             // 

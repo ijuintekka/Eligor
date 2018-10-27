@@ -21,10 +21,10 @@ namespace Eligor
         uint PokemonSeed;
         uint[] PID = { 0, 0, 0, 0, 0, 0 };
         uint Characteristic;
-        uint seedtick;
-        uint startseed;
-        uint maxseed;
-        uint tempseed;
+        uint Seedtick;
+        uint Startseed;
+        uint Maxseed;
+        uint Tempseed;
         int[] IVs = { 31, 31, 31, 31, 31, 31 };
         uint MAX_HP_IV;
         uint MAX_Attack_IV;
@@ -65,14 +65,14 @@ namespace Eligor
         uint EeveeTID;
         uint EeveeSID;
         uint EeveeSeed;
-        uint progval;
-        uint progtick;
+        uint Progval;
+        uint Progtick;
         string ReRollTSV;
         bool RunSilent;
         bool OutputCSV;
         string date;
         bool LeadShadow;
-        string pokemon;
+        string[] Pokemon = { "", "", "", "", "", "", "" };
         bool EPSVFilter;
         decimal EPSValue;
 
@@ -123,7 +123,7 @@ namespace Eligor
             else
             {
                 Line = string.Join(",",
-                seedtick.ToString("X8"));
+                Seedtick.ToString("X8"));
             }
             Line = string.Join(",",Line,
             PokemonSeed.ToString("X8"),
@@ -145,7 +145,7 @@ namespace Eligor
             {
                 for (uint i = 1; i <= HasLock; i++)
                 {
-                    Line = $"{Line},{(string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Species"]}:{PID[i]:X8}";
+                    Line = $"{Line},{Pokemon[i]}:{PID[i]:X8}";
                     if (IsReRoll[i] > 0) { Line = $"{Line}*ReRoll={IsReRoll[i]}"; }
                 }
             }
@@ -156,7 +156,7 @@ namespace Eligor
             }
             if (OutputCSV == true)
             {
-                System.IO.File.AppendAllText("Results(" + pokemon + ") " + date + ".csv", Line + "\r");
+                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + date + ".csv", Line + "\r");
             }
         }
 
@@ -228,11 +228,11 @@ namespace Eligor
 
         private void SolveLock()
         {
-            if (Nature[1] > 24 || (Gender[1] == GetGender(PID[1] = GetPID(tempseed), GenderThreshold[1]) && Nature[1] == GetNature(PID[1])))
+            if (Nature[1] > 24 || (Gender[1] == GetGender(PID[1] = GetPID(Tempseed), GenderThreshold[1]) && Nature[1] == GetNature(PID[1])))
             {
                 for (uint i = 1; i <= HasLock; i++)
                 {
-                    if (LeadShadow = true && i == 2 && (Gender[2] != GetGender(PID[2] = GetPID(tempseed), GenderThreshold[2]) || Nature[2] != GetNature(PID[2])))
+                    if (LeadShadow == true && i == 2 && (Gender[2] != GetGender(PID[2] = GetPID(Tempseed), GenderThreshold[2]) || Nature[2] != GetNature(PID[2])))
                     {
                         Halt = 1;
                         break;
@@ -240,11 +240,11 @@ namespace Eligor
                     if (Nature[i] == 26)
                     {
                         PokemonShinyValue[i] = PID[i] = 4294967295;
-                        tempseed = RNGAdv(tempseed, 5);
+                        Tempseed = RNGAdv(Tempseed, 5);
                     }
                     else
                     {
-                        PID[i] = GetPID(tempseed);
+                        PID[i] = GetPID(Tempseed);
                         PokemonShinyValue[i] = GetSV(PID[i]);
                         if (PokemonShinyValue[i] == TrainerShinyValue)
                         {
@@ -254,8 +254,8 @@ namespace Eligor
                         {
                             while (Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || ((AllowShiny == 0 && PokemonShinyValue[i] == TrainerShinyValue)))
                             {
-                                tempseed = RNGAdv(tempseed, 2);
-                                PID[i] = GetPID(tempseed);
+                                Tempseed = RNGAdv(Tempseed, 2);
+                                PID[i] = GetPID(Tempseed);
                                 PokemonShinyValue[i] = GetSV(PID[i]);
                                 if (PokemonShinyValue[i] == TrainerShinyValue && (Nature[i] == GetNature(PID[i])) && (Gender[i] == GetGender(PID[i], GenderThreshold[i])))
                                 {
@@ -286,8 +286,8 @@ namespace Eligor
                         IsReRoll[i] = 0;
                         while ((Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || ((AllowShiny == 0 && PokemonShinyValue[i] == TrainerShinyValue))) && Halt == 0)
                         {
-                            tempseed = RNGAdv(tempseed, 2);
-                            PID[i] = GetPID(tempseed);
+                            Tempseed = RNGAdv(Tempseed, 2);
+                            PID[i] = GetPID(Tempseed);
                             PokemonShinyValue[i] = GetSV(PID[i]);
                             IsReRoll[i]++;
                             if (PokemonShinyValue[i] == TrainerShinyValue && (Nature[i] == GetNature(PID[i])) && (Gender[i] == GetGender(PID[i], GenderThreshold[i])))
@@ -297,7 +297,7 @@ namespace Eligor
                         }
                         if (Halt == 0)
                         {
-                            tempseed = RNGAdv(tempseed, 7);
+                            Tempseed = RNGAdv(Tempseed, 7);
                         }
                     }
                 }
@@ -310,14 +310,14 @@ namespace Eligor
 
         private void SpreadFinder()
         {
-            tempseed = seedtick;
+            Tempseed = Seedtick;
             if (HasLock > 0)
             {
                 SolveLock();
             }
             else if (IsStarter == true)
             {
-                EeveeSeed = tempseed;
+                EeveeSeed = Tempseed;
                 for (uint i = 0; i < 3; i++)
                 {
                     EeveeSeed = ((EeveeSeed * 0xb9b33155) + 0xa170f641) & 0xFFFFFFFF;
@@ -335,22 +335,22 @@ namespace Eligor
                 {
                     Halt = 1;
                 }
-                else if (pokemon == "Espeon (Colosseum)")
+                else if (Pokemon[0] == "Espeon (Colosseum)")
                 {
-                    PID[0] = GetPID(tempseed);
+                    PID[0] = GetPID(Tempseed);
                     PokemonShinyValue[0] = GetSV(PID[0]);
                     while ((PokemonShinyValue[0] == TrainerShinyValue) || (GetGender(PID[0], 31) == "Female"))
                     {
-                        tempseed = RNGAdv(tempseed, 2);
-                        PID[0] = GetPID(tempseed);
+                        Tempseed = RNGAdv(Tempseed, 2);
+                        PID[0] = GetPID(Tempseed);
                         PokemonShinyValue[0] = GetSV(PID[0]);
                     }
-                    tempseed = RNGAdv(tempseed, 7);
+                    Tempseed = RNGAdv(Tempseed, 7);
                 }
             }
             if (Halt == 0)
             {
-                GetIVs(tempseed);
+                GetIVs(Tempseed);
                 if ( // Begin Failure Conditions
                     IVs[0] < MIN_HP_IV ||
                     IVs[1] < MIN_Attack_IV ||
@@ -391,8 +391,8 @@ namespace Eligor
                         }
                         else
                         {
-                            PokemonSeed = tempseed;
-                            PID[0] = GetPID(tempseed);
+                            PokemonSeed = Tempseed;
+                            PID[0] = GetPID(Tempseed);
                             PokemonShinyValue[0] = GetSV(PID[0]);
                             if (ForceShiny == 6)
                             {
@@ -405,8 +405,8 @@ namespace Eligor
                             IsReRoll[0] = 0;
                             while ((AllowShiny == 0 && PokemonShinyValue[0] == TrainerShinyValue) || (IsStarter == true && AllowShiny == 0 && GetGender(PID[0], 31) == "Female"))
                             {
-                                tempseed = RNGAdv(tempseed, 2);
-                                PID[0] = GetPID(tempseed);
+                                Tempseed = RNGAdv(Tempseed, 2);
+                                PID[0] = GetPID(Tempseed);
                                 PokemonShinyValue[0] = GetSV(PID[0]);
                                 IsReRoll[0]++;
                             }
@@ -2824,8 +2824,9 @@ namespace Eligor
         private void Button1_Click(object sender, EventArgs e)
         {
             BackgroundWorker1.RunWorkerAsync();
-            pokemon = (string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"];
-            if (pokemon.Contains("Snorlax") || pokemon.Contains("Electabuzz") || pokemon.Contains("Pidgeotto"))
+            SelectedPokemon = ComboBox1.SelectedIndex;
+            Pokemon[0] = (string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"];
+            if (Pokemon[0].Contains("Snorlax") || Pokemon[0].Contains("Electabuzz") || Pokemon[0].Contains("Pidgeotto"))
             {
                 LeadShadow = true;
             }
@@ -2836,7 +2837,6 @@ namespace Eligor
             EPSVFilter = EPSV_Label.Checked;
             EPSValue = EPSV_Val.Value;
             IsStarter = Button1.Enabled = false;
-            SelectedPokemon = ComboBox1.SelectedIndex;
             if (Silent.Checked == false) { RunSilent = false; } else { RunSilent = true; }
             if (CSV.Checked == false) { OutputCSV = false; } else { OutputCSV = true; }
             GenderThreshold[0] = (uint)Pokemon_List.Rows[SelectedPokemon]["Gender_Threshold"];
@@ -2844,6 +2844,7 @@ namespace Eligor
             AllowShiny = (uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"];
             for (uint i = 1; i <= HasLock; i++)
             {
+                Pokemon[i] = (string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Species"];
                 Gender[i] = (string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender"];
                 Nature[i] = (uint)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Nature"];
                 GenderThreshold[i] = (uint)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender_Threshold"];
@@ -2878,13 +2879,13 @@ namespace Eligor
             else if (P4.Checked == true) { ForceShiny = 4; }
             else if (P5.Checked == true) { ForceShiny = 5; }
             else { ForceShiny = 0; }
-            if (InitialSeed.Text.Length < 1) { startseed = 0; } else { startseed = uint.Parse(InitialSeed.Text, System.Globalization.NumberStyles.AllowHexSpecifier); }
-            if (EnableLimit.Checked == true) { maxseed = startseed + (uint)ResultsLimit.Value; progval = (uint)ResultsLimit.Value / 101; } else { maxseed = startseed + 4294967295; progval = 42524427; }
-            progtick = 0;
+            if (InitialSeed.Text.Length < 1) { Startseed = 0; } else { Startseed = uint.Parse(InitialSeed.Text, System.Globalization.NumberStyles.AllowHexSpecifier); }
+            if (EnableLimit.Checked == true) { Maxseed = Startseed + (uint)ResultsLimit.Value; Progval = (uint)ResultsLimit.Value / 101; } else { Maxseed = Startseed + 4294967295; Progval = 42524427; }
+            Progtick = 0;
             if (TID_Match.Checked == true) { TSID[0] = 1; TSID[1] = (int)TSVal.Value; } else if ((int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"] > -1) { TSID[0] = 1; TSID[1] = (int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"]; } else { TSID[0] = 0; }
             if (ETID_Check.Checked == true) { StarterTID[0] = 1; StarterTID[1] = (uint)ETID_Val.Value; } else { StarterTID[0] = 0; }
             MustBeShiny = ShinyOnly.Checked;
-            switch (pokemon) { case string p when p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)": IsStarter = true; break; }
+            switch (Pokemon[0]) { case string p when p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)": IsStarter = true; break; }
             DataGridView1.Columns.Clear();
             DataGridView1.Columns.Add("EncounterSeed", "Encounter Seed");
             if (IsStarter == true) { DataGridView1.Columns.Add("StarterTID", "Trainer ID"); DataGridView1.Columns.Add("StarterSID", "Secret ID"); }
@@ -2903,7 +2904,7 @@ namespace Eligor
             DataGridView1.Columns.Add("Characteristic", "Characteristic");
             if (HasLock > 0) { for (uint i = 1; i <= HasLock; i++) { DataGridView1.Columns.Add($"PatternPokemon{i}", $"Pattern Pokemon {i}"); } }
             if (RunSilent == true) { DataGridView1.Rows.Add("Running silently. Check CSV for output..."); }
-            seedtick = startseed;
+            Seedtick = Startseed;
             if (OutputCSV == true)
             {
                 date = DateTime.Now.ToString("yyyyMMddhhmmss");
@@ -2912,7 +2913,7 @@ namespace Eligor
                 {
                     Line = Line + "," + DataGridView1.Columns[i].Name;
                 }
-                System.IO.File.AppendAllText("Results(" + pokemon + ") " + date + ".csv", Line + "\r" + pokemon + "\r");
+                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + date + ".csv", Line + "\r" + Pokemon[0] + "\r");
             }
             Cursor = Cursors.WaitCursor;
             Halt = 0;
@@ -2923,7 +2924,7 @@ namespace Eligor
                 ProgBar.Left = Left + (Width / 2) - 111;
                 ProgBar.Visible = true;
             } ));
-            while (seedtick != maxseed && Halt != 5) { if (ProgBar.Cancel.Enabled == true) { StartSearch(); } else { Halt = 5; } seedtick++; progtick++; }
+            while (Seedtick != Maxseed && Halt != 5) { if (ProgBar.Cancel.Enabled == true) { StartSearch(); } else { Halt = 5; } Seedtick++; Progtick++; }
             if (Halt != 5) { StartSearch(); }
             Cursor = Cursors.Default;
             ProgBar.Invoke(new Action(() => ProgBar.Visible = false));
@@ -2947,10 +2948,10 @@ namespace Eligor
             {
                 WriteOut();
             }
-            if (progtick == progval)
+            if (Progtick == Progval)
             {
                 ProgBar.Invoke(new Action(() => ProgBar.ProgressBar1.PerformStep()));
-                progtick = 0;
+                Progtick = 0;
             }
         }
 
