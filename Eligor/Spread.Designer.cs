@@ -1081,7 +1081,7 @@
             this.VersionLabel.Name = "VersionLabel";
             this.VersionLabel.Size = new System.Drawing.Size(63, 13);
             this.VersionLabel.TabIndex = 112;
-            this.VersionLabel.Text = "Version 1.4.";
+            this.VersionLabel.Text = "Version 1.5.";
             this.VersionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // CharacteristicComboBox

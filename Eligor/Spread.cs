@@ -1378,8 +1378,8 @@ namespace Eligor
                 0, //1 = Shiny Allowed
                 -1, //Shiny Value
 
-                "Ninetales", //Pokemon 1, Serious, Male
-                "Male", 12, 191,
+                "Ninetales", //Pokemon 1, Serious, Female
+                "Female", 12, 191,
 
                 "Jumpluff", //Pokemon 2, Docile, Male
                 "Male", 6, 127,
@@ -1393,8 +1393,8 @@ namespace Eligor
                 0, //1 = Shiny Allowed
                 -1, //Shiny Value
 
-                "Ninetales", //Pokemon 1, Serious, Male
-                "Male", 12, 191,
+                "Ninetales", //Pokemon 1, Serious, Female
+                "Female", 12, 191,
 
                 "Jumpluff", //Pokemon 2, Docile, Male
                 "Male", 6, 127,
@@ -1411,8 +1411,8 @@ namespace Eligor
                 0, //1 = Shiny Allowed
                 -1, //Shiny Value
 
-                "Ninetales", //Pokemon 1, Serious, Male
-                "Male", 12, 191,
+                "Ninetales", //Pokemon 1, Serious, Female
+                "Female", 12, 191,
 
                 "Jumpluff", //Pokemon 2, Docile, Male
                 "Male", 6, 127,
