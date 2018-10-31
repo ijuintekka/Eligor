@@ -117,17 +117,24 @@ namespace Eligor
             if (IsStarter == true)
             {
                 Line = string.Join(",",
-                EeveeSeed.ToString("X8"),EeveeTID, EeveeSID);
+                EeveeSeed.ToString("X8"),
+                EeveeTID,
+                EeveeSID
+                );
             }
             else
             {
-                Line = string.Join(",",
-                Seedtick.ToString("X8"));
+                Line = Seedtick.ToString("X8");
             }
             Line = string.Join(",",Line,
             PokemonSeed.ToString("X8"),
             PID[0].ToString("X8")
-            ); if (IsReRoll[0] > 0) { Line = $"{Line}*ReRoll={IsReRoll[0]}"; } Line = string.Join(",",Line,
+            );
+            if (IsReRoll[0] > 0)
+            {
+                Line = $"{Line}*ReRoll={IsReRoll[0]}";
+            }
+            Line = string.Join(",",Line,
             ReRollTSV,
             NatureText[Nature[0]],
             Gender[0],
@@ -146,6 +153,26 @@ namespace Eligor
                 {
                     Line = $"{Line},{Pokemon[i]}:{PID[i]:X8}";
                     if (IsReRoll[i] > 0) { Line = $"{Line}*ReRoll={IsReRoll[i]}"; }
+                }
+                if (LeadShadow == false)
+                {
+                    string Safety = "";
+                    uint i = 0;
+                    Tempseed = RNGRev(Seedtick, 1);
+                    while (!(Gender[1] == GetGender(PID[1] = GetPID(Tempseed), GenderThreshold[1]) && Nature[1] == GetNature(PID[1])))
+                    {
+                        i++;
+                        Safety = $"-{i}: {Tempseed.ToString("X8")};{Safety}";
+                        Tempseed = RNGRev(Tempseed, 1);
+                    }
+                    if (i > 0)
+                    {
+                        Line = $"{Line},{i} Safety Frames: {Safety}";
+                    }
+                    else
+                    {
+                        Line = $"{Line},No Safety Frames.";
+                    }
                 }
             }
             if (RunSilent == false)
@@ -2825,11 +2852,39 @@ namespace Eligor
             BackgroundWorker1.RunWorkerAsync();
             SelectedPokemon = ComboBox1.SelectedIndex;
             Pokemon[0] = (string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"];
-            if (Pokemon[0].Contains("Snorlax") || Pokemon[0].Contains("Electabuzz") || Pokemon[0].Contains("Pidgeotto")) { LeadShadow = true; } else { LeadShadow = false; }
-            if (EPSV_Label.Checked == true) { EPSV[0] = 1; EPSV[1] = EPSV_Val.Value; } else { EPSV[0] = 0; }
+            if (Pokemon[0].Contains("Snorlax") || Pokemon[0].Contains("Electabuzz") || Pokemon[0].Contains("Pidgeotto"))
+            {
+                LeadShadow = true;
+            }
+            else
+            {
+                LeadShadow = false;
+            }
+            if (EPSV_Label.Checked == true)
+            {
+                EPSV[0] = 1; EPSV[1] = EPSV_Val.Value;
+            }
+            else
+            {
+                EPSV[0] = 0;
+            }
             IsStarter = Button1.Enabled = false;
-            if (Silent.Checked == false) { RunSilent = false; } else { RunSilent = true; }
-            if (CSV.Checked == false) { OutputCSV = false; } else { OutputCSV = true; }
+            if (Silent.Checked == false)
+            {
+                RunSilent = false;
+            }
+            else
+            {
+                RunSilent = true;
+            }
+            if (CSV.Checked == false)
+            {
+                OutputCSV = false;
+            }
+            else
+            {
+                OutputCSV = true;
+            }
             GenderThreshold[0] = (uint)Pokemon_List.Rows[SelectedPokemon]["Gender_Threshold"];
             HasLock = (uint)Pokemon_List.Rows[SelectedPokemon]["Lock"];
             AllowShiny = (uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"];
@@ -2857,32 +2912,149 @@ namespace Eligor
             MAX_HiddenPowerStrength = (uint)HID_Max.Value;
             MIN_HiddenPowerStrength = (uint)HID_Min.Value;
             PokemonGenderTarget = SelectGender.SelectedItem.ToString();
-            for (int i = 0; i < Selected_Nature.Length; i++) { if (NatureComboBox.GetItemCheckState(i) == CheckState.Checked) { Selected_Nature[i] = 1; } else { Selected_Nature[i] = 0; } }
-            if (Selected_Nature.Sum() == 0) { for (int i = 0; i < Selected_Nature.Length; i++) { Selected_Nature[i] = 1; } }
-            for (int i = 0; i < Selected_Characteristic.Length; i++) { if (CharacteristicComboBox.GetItemCheckState(i) == CheckState.Checked) { Selected_Characteristic[i] = 1; } else { Selected_Characteristic[i] = 0; } }
-            if (Selected_Characteristic.Sum() == 0) { for (int i = 0; i < Selected_Characteristic.Length; i++) { Selected_Characteristic[i] = 1; } }
-            for (int i = 0; i < Selected_HiddenPowerType.Length; i++) { if (HiddenPowerComboBox.GetItemCheckState(i) == CheckState.Checked) { Selected_HiddenPowerType[i] = 1; } else { Selected_HiddenPowerType[i] = 0; } }
-            if (Selected_HiddenPowerType.Sum() == 0) { for (int i = 0; i < Selected_HiddenPowerType.Length; i++) { Selected_HiddenPowerType[i] = 1; } }
-            if (PT.Checked == true) { ForceShiny = 6; }
-            else if (P1.Checked == true) { ForceShiny = 1; }
-            else if (P2.Checked == true) { ForceShiny = 2; }
-            else if (P3.Checked == true) { ForceShiny = 3; }
-            else if (P4.Checked == true) { ForceShiny = 4; }
-            else if (P5.Checked == true) { ForceShiny = 5; }
-            else { ForceShiny = 0; }
-            if (InitialSeed.Text.Length < 1) { Startseed = 0; } else { Startseed = uint.Parse(InitialSeed.Text, System.Globalization.NumberStyles.AllowHexSpecifier); }
-            if (EnableLimit.Checked == true) { Maxseed = Startseed + (uint)ResultsLimit.Value; Progval = (uint)ResultsLimit.Value / 101; } else { Maxseed = Startseed + 4294967295; Progval = 42524427; }
+            for (int i = 0; i < Selected_Nature.Length; i++)
+            {
+                if (NatureComboBox.GetItemCheckState(i) == CheckState.Checked)
+                {
+                    Selected_Nature[i] = 1;
+                }
+                else
+                {
+                    Selected_Nature[i] = 0;
+                }
+            }
+            if (Selected_Nature.Sum() == 0)
+            {
+                for (int i = 0; i < Selected_Nature.Length; i++)
+                {
+                    Selected_Nature[i] = 1;
+                }
+            }
+            for (int i = 0; i < Selected_Characteristic.Length; i++)
+            {
+                if (CharacteristicComboBox.GetItemCheckState(i) == CheckState.Checked)
+                {
+                    Selected_Characteristic[i] = 1;
+                }
+                else
+                {
+                    Selected_Characteristic[i] = 0;
+                }
+            }
+            if (Selected_Characteristic.Sum() == 0)
+            {
+                for (int i = 0; i < Selected_Characteristic.Length; i++)
+                {
+                    Selected_Characteristic[i] = 1;
+                }
+            }
+            for (int i = 0; i < Selected_HiddenPowerType.Length; i++)
+            {
+                if (HiddenPowerComboBox.GetItemCheckState(i) == CheckState.Checked)
+                {
+                    Selected_HiddenPowerType[i] = 1;
+                }
+                else
+                {
+                    Selected_HiddenPowerType[i] = 0;
+                }
+            }
+            if (Selected_HiddenPowerType.Sum() == 0)
+            {
+                for (int i = 0; i < Selected_HiddenPowerType.Length; i++)
+                {
+                    Selected_HiddenPowerType[i] = 1;
+                }
+            }
+            if (PT.Checked == true)
+            {
+                ForceShiny = 6;
+            }
+            else if (P1.Checked == true)
+            {
+                ForceShiny = 1;
+            }
+            else if (P2.Checked == true)
+            {
+                ForceShiny = 2;
+            }
+            else if (P3.Checked == true)
+            {
+                ForceShiny = 3;
+            }
+            else if (P4.Checked == true)
+            {
+                ForceShiny = 4;
+            }
+            else if (P5.Checked == true)
+            {
+                ForceShiny = 5;
+            }
+            else
+            {
+                ForceShiny = 0;
+            }
+            if (InitialSeed.Text.Length < 1)
+            {
+                Startseed = 0;
+            }
+            else
+            {
+                Startseed = uint.Parse(InitialSeed.Text, System.Globalization.NumberStyles.AllowHexSpecifier);
+            }
+            if (EnableLimit.Checked == true && ResultsLimit.Value > 0)
+            {
+                Maxseed = Startseed + (uint)ResultsLimit.Value - 1;
+                Progval = (uint)ResultsLimit.Value / 101;
+            }
+            else
+            {
+                Maxseed = Startseed + 4294967295;
+                Progval = 42524427;
+            }
             Progtick = 0;
-            if (TID_Match.Checked == true) { TSID[0] = 1; TSID[1] = (int)TSVal.Value; } else if ((int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"] > -1) { TSID[0] = 1; TSID[1] = (int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"]; } else { TSID[0] = 0; }
-            if (ETID_Check.Checked == true) { StarterTID[0] = 1; StarterTID[1] = (uint)ETID_Val.Value; } else { StarterTID[0] = 0; }
+            if (TID_Match.Checked == true)
+            {
+                TSID[0] = 1; TSID[1] = (int)TSVal.Value;
+            }
+            else if ((int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"] > -1)
+            {
+                TSID[0] = 1; TSID[1] = (int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"];
+            }
+            else
+            {
+                TSID[0] = 0;
+            }
+            if (ETID_Check.Checked == true)
+            {
+                StarterTID[0] = 1; StarterTID[1] = (uint)ETID_Val.Value;
+            }
+            else
+            {
+                StarterTID[0] = 0;
+            }
             MustBeShiny = ShinyOnly.Checked;
-            switch (Pokemon[0]) { case string p when p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)": IsStarter = true; break; }
+            switch (Pokemon[0])
+            {
+                case string p when p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)": IsStarter = true; break;
+            }
             DataGridView1.Columns.Clear();
             DataGridView1.Columns.Add("EncounterSeed", "Encounter Seed");
-            if (IsStarter == true) { DataGridView1.Columns.Add("StarterTID", "Trainer ID"); DataGridView1.Columns.Add("StarterSID", "Secret ID"); }
+            if (IsStarter == true)
+            {
+                DataGridView1.Columns.Add("StarterTID", "Trainer ID");
+                DataGridView1.Columns.Add("StarterSID", "Secret ID");
+            }
             DataGridView1.Columns.Add("PokemonSeed", "Pokémon Seed");
             DataGridView1.Columns.Add("PID", "PID");
-            if ((uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == 0) { DataGridView1.Columns.Add("ReRollTSV", "ReRoll TSV"); } else { DataGridView1.Columns.Add("ShinyTSV", "Shiny TSV"); }
+            if ((uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == 0)
+            {
+                DataGridView1.Columns.Add("ReRollTSV", "ReRoll TSV");
+            }
+            else
+            {
+                DataGridView1.Columns.Add("ShinyTSV", "Shiny TSV");
+            }
             DataGridView1.Columns.Add("Nature", "Nature");
             DataGridView1.Columns.Add("Gender", "Gender");
             DataGridView1.Columns.Add("HP", "HP");
@@ -2893,8 +3065,21 @@ namespace Eligor
             DataGridView1.Columns.Add("Speed", "Speed");
             DataGridView1.Columns.Add("HiddenPower", "Hidden Power");
             DataGridView1.Columns.Add("Characteristic", "Characteristic");
-            if (HasLock > 0) { for (uint i = 1; i <= HasLock; i++) { DataGridView1.Columns.Add($"PatternPokemon{i}", $"Pattern Pokemon {i}"); } }
-            if (RunSilent == true) { DataGridView1.Rows.Add("Running silently. Check CSV for output..."); }
+            if (HasLock > 0)
+            {
+                for (uint i = 1; i <= HasLock; i++)
+                {
+                    DataGridView1.Columns.Add($"PatternPokemon{i}", $"Pattern Pokemon {i}");
+                }
+                if (LeadShadow == false)
+                {
+                    DataGridView1.Columns.Add("SafetyFrames", "Safety Frames");
+                }
+            }
+            if (RunSilent == true)
+            {
+                DataGridView1.Rows.Add("Running silently. Check CSV for output...");
+            }
             Seedtick = Startseed;
             if (OutputCSV == true)
             {
@@ -2908,15 +3093,31 @@ namespace Eligor
             }
             Cursor = Cursors.WaitCursor;
             Halt = 0;
-            ProgBar.Invoke(new Action(() => {
+            ProgBar.Invoke(new Action(() =>
+            {
                 ProgBar.ProgressBar1.Value = 0;
                 ProgBar.Cancel.Enabled = true;
                 ProgBar.Top = Top + (Height / 2) - 57;
                 ProgBar.Left = Left + (Width / 2) - 111;
                 ProgBar.Visible = true;
             } ));
-            while (Seedtick != Maxseed && Halt != 5) { if (ProgBar.Cancel.Enabled == true) { StartSearch(); } else { Halt = 5; } Seedtick++; Progtick++; }
-            if (Halt != 5) { StartSearch(); }
+            while (Seedtick != Maxseed && Halt != 5)
+            {
+                if (ProgBar.Cancel.Enabled == true)
+                {
+                    StartSearch();
+                }
+                else
+                {
+                    Halt = 5;
+                }
+                Seedtick++;
+                Progtick++;
+            }
+            if (Halt != 5)
+            {
+                StartSearch();
+            }
             Cursor = Cursors.Default;
             ProgBar.Invoke(new Action(() => ProgBar.Visible = false));
             Button1.Enabled = true;

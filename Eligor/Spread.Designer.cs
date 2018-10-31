@@ -932,6 +932,11 @@
             0,
             0,
             0});
+            this.ResultsLimit.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.ResultsLimit.Name = "ResultsLimit";
             this.ResultsLimit.Size = new System.Drawing.Size(87, 20);
             this.ResultsLimit.TabIndex = 94;
