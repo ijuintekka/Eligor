@@ -2047,11 +2047,11 @@ namespace Eligor
                 "Shadow Swellow", //Pokemon 1, Shadow
                 "Genderless", 25, 256,
 
-                "Alakazam", //Pokemon 2, Serious, Male
-                "Male", 12, 63,
+                "Alakazam", //Pokemon 2, Quirky, Male
+                "Male", 24, 63,
 
-                "Kingdra", //Pokemon 3, Bashful, Female
-                "Female", 18, 127,
+                "Kingdra", //Pokemon 3, Docile, Female
+                "Female", 6, 127,
 
                 "Heracross", //Pokemon 4, Bashful, Female
                 "Female", 18, 127);
@@ -2065,11 +2065,11 @@ namespace Eligor
                 "Shadow Swellow", //Pokemon 1, Shadow -Seen-
                 "Genderless", 26, 256,
 
-                "Alakazam", //Pokemon 2, Serious, Male
-                "Male", 12, 63,
+                "Alakazam", //Pokemon 2, Quirky, Male
+                "Male", 24, 63,
 
-                "Kingdra", //Pokemon 3, Bashful, Female
-                "Female", 18, 127,
+                "Kingdra", //Pokemon 3, Docile, Female
+                "Female", 6, 127,
 
                 "Heracross", //Pokemon 4, Bashful, Female
                 "Female", 18, 127);
@@ -2083,11 +2083,11 @@ namespace Eligor
                 "Shadow Swellow", //Pokemon 1, Shadow
                 "Genderless", 25, 256,
 
-                "Alakazam", //Pokemon 2, Serious, Male
-                "Male", 12, 63,
+                "Alakazam", //Pokemon 2, Quirky, Male
+                "Male", 24, 63,
 
-                "Kingdra", //Pokemon 3, Bashful, Female
-                "Female", 18, 127,
+                "Kingdra", //Pokemon 3, Docile, Female
+                "Female", 6, 127,
 
                 "Heracross", //Pokemon 4, Bashful, Female
                 "Female", 18, 127,
@@ -2104,11 +2104,11 @@ namespace Eligor
                 "Shadow Swellow", //Pokemon 1, Shadow -Seen-
                 "Genderless", 26, 256,
 
-                "Alakazam", //Pokemon 2, Serious, Male
-                "Male", 12, 63,
+                "Alakazam", //Pokemon 2, Quirky, Male
+                "Male", 24, 63,
 
-                "Kingdra", //Pokemon 3, Bashful, Female
-                "Female", 18, 127,
+                "Kingdra", //Pokemon 3, Docile, Female
+                "Female", 6, 127,
 
                 "Heracross", //Pokemon 4, Bashful, Female
                 "Female", 18, 127,
@@ -2125,11 +2125,11 @@ namespace Eligor
                 "Shadow Swellow", //Pokemon 1, Shadow -Seen-
                 "Genderless", 26, 256,
 
-                "Alakazam", //Pokemon 2, Serious, Male
-                "Male", 12, 63,
+                "Alakazam", //Pokemon 2, Quirky, Male
+                "Male", 24, 63,
 
-                "Kingdra", //Pokemon 3, Bashful, Female
-                "Female", 18, 127,
+                "Kingdra", //Pokemon 3, Docile, Female
+                "Female", 6, 127,
 
                 "Heracross", //Pokemon 4, Bashful, Female
                 "Female", 18, 127,
