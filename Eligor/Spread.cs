@@ -1024,20 +1024,20 @@ namespace Eligor
                 0, //1 = Shiny Allowed
                 -1, //Shiny Value
 
-                "Oddish", //Pokemon 1, Docile, Male
+                "Vileplume", //Pokemon 1, Docile, Male
                 "Male", 6, 127,
 
-                "Cacnea", //Pokemon 2, Quirky, Female
+                "Cacturne", //Pokemon 2, Quirky, Female
                 "Female", 24, 127,
 
-                "Shroomish", //Pokemon 3, Hardy, Female
+                "Breloom", //Pokemon 3, Hardy, Female
                 "Female", 0, 127,
 
-                "Lotad", //Pokemon 4, Hardy, Male
+                "Lombre", //Pokemon 4, Hardy, Male
                 "Male", 0, 127,
 
-                "Pineco", //Pokemon 5, Docile, Male
-                "Male", 6, 127);
+                "Forretress", //Pokemon 5, Serious, Male
+                "Male", 12, 127);
 
             Pokemon_List.Rows.Add("Spinarak (XD)",
                 127, //Gender Threshold
@@ -1909,16 +1909,16 @@ namespace Eligor
                 0, //1 = Shiny Allowed
                 -1, //Shiny Value
 
-                "Grumpig", //Pokemon 1, Quirky, Male
+                "Grumpig", //Pokemon 1, Bashful, Male
                 "Male", 18, 127,
 
-                "Skarmory", //Pokemon 2, Docile, Male
-                "Male", 12, 127,
+                "Skarmory", //Pokemon 2, Serious, Female
+                "Female", 12, 127,
 
-                "Metang", //Pokemon 3, Serious, Female
+                "Metang", //Pokemon 3, Docile, Female
                 "Genderless", 6, 256,
 
-                "Hariyama", //Pokemon 4, Bashful, Female
+                "Hariyama", //Pokemon 4, Quirky, Female
                 "Female", 24, 63);
 
             Pokemon_List.Rows.Add("Lickitung (XD)",
