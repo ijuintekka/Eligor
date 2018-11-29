@@ -74,6 +74,7 @@ namespace Eligor
         bool LeadShadow;
         string[] Pokemon = { "", "", "", "", "", "" };
         decimal[] EPSV = { 0, 0 };
+        uint EnemyTSV;
 
         private uint RNGAdv(uint tseed, uint frame)
         {
@@ -134,6 +135,10 @@ namespace Eligor
             {
                 Line = $"{Line}*ReRoll={IsReRoll[0]}";
             }
+            if (ForceShiny > 0 && AllowShiny == 1 && HasLock > 0)
+            {
+                Line = $"{Line},{EnemyTSV}";
+            }
             Line = string.Join(",",Line,
             ReRollTSV,
             NatureText[Nature[0]],
@@ -154,7 +159,7 @@ namespace Eligor
                     Line = $"{Line},{Pokemon[i]}:{PID[i]:X8}";
                     if (IsReRoll[i] > 0) { Line = $"{Line}*ReRoll={IsReRoll[i]}"; }
                 }
-                if (LeadShadow == false)
+                if (LeadShadow == false && !(AllowShiny == 1 && ForceShiny > 0))
                 {
                     string Safety = "";
                     uint i = 0;
@@ -334,12 +339,52 @@ namespace Eligor
             }
         }
 
+        private void SolveForceColoLock()
+        {
+            EnemyTSV = GetSV((uint)(SplitRev(Tempseed, 3) << 16 & 0xFFFF0000) + SplitRev(Tempseed, 2));
+            for (uint i = 1; i <= HasLock; i++)
+            {
+                PID[i] = GetPID(Tempseed);
+                PokemonShinyValue[i] = GetSV(PID[i]);
+                while ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i])))
+                {
+                    Tempseed = RNGAdv(Tempseed, 2);
+                    PID[i] = GetPID(Tempseed);
+                    PokemonShinyValue[i] = GetSV(PID[i]);
+                }
+                if (ForceShiny == i && PokemonShinyValue[i] != EnemyTSV)
+                {
+                    Halt = 1;
+                    break;
+                }
+                else
+                {
+                    IsReRoll[i] = 0;
+                    while ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i])) || (PokemonShinyValue[i] == EnemyTSV))
+                    {
+                        Tempseed = RNGAdv(Tempseed, 2);
+                        PID[i] = GetPID(Tempseed);
+                        PokemonShinyValue[i] = GetSV(PID[i]);
+                        IsReRoll[i]++;
+                    }
+                    Tempseed = RNGAdv(Tempseed, 7);
+                }
+            }
+        }
+
         private void SpreadFinder()
         {
-            Tempseed = Seedtick;
+            Tempseed = RNGAdv(Seedtick, 3);
             if (HasLock > 0)
             {
-                SolveLock();
+                if (AllowShiny > 0 && ForceShiny > 0)
+                {
+                    SolveForceColoLock();
+                }
+                else
+                {
+                    SolveLock();
+                }
             }
             else if (IsStarter == true)
             {
@@ -420,7 +465,7 @@ namespace Eligor
                             PokemonSeed = Tempseed;
                             PID[0] = GetPID(Tempseed);
                             PokemonShinyValue[0] = GetSV(PID[0]);
-                            if (ForceShiny == 6)
+                            if (ForceShiny == 6 && AllowShiny == 0)
                             {
                                 TrainerShinyValue = PokemonShinyValue[0];
                             }
@@ -1684,7 +1729,7 @@ namespace Eligor
                 "Whiscash", //Pokemon 3, Bashful, Male
                 "Male", 18, 127);
 
-            Pokemon_List.Rows.Add("Fargetch'd (XD)",
+            Pokemon_List.Rows.Add("Farfetch'd (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
                 0, //1 = Shiny Allowed
@@ -2819,25 +2864,25 @@ namespace Eligor
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
                 1, //1 = Shiny Allowed
-                2993); //Shiny Value
+                -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Shuckle (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
                 1, //1 = Shiny Allowed
-                2993); //Shiny Value
+                -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Larvitar (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
                 1, //1 = Shiny Allowed
-                2993); //Shiny Value
+                -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Elekid (XD)",
                 63, //Gender Threshold
                 0, //Number of pokemon before Shadow
                 1, //1 = Shiny Allowed
-                3493); //Shiny Value
+                -1); //Shiny Value
 
             DataView AZ = Pokemon_List.DefaultView;
             AZ.Sort = "Pokemon";
@@ -2852,14 +2897,6 @@ namespace Eligor
             BackgroundWorker1.RunWorkerAsync();
             SelectedPokemon = ComboBox1.SelectedIndex;
             Pokemon[0] = (string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"];
-            if (Pokemon[0].Contains("Snorlax") || Pokemon[0].Contains("Electabuzz") || Pokemon[0].Contains("Pidgeotto"))
-            {
-                LeadShadow = true;
-            }
-            else
-            {
-                LeadShadow = false;
-            }
             if (EPSV_Label.Checked == true)
             {
                 EPSV[0] = 1; EPSV[1] = EPSV_Val.Value;
@@ -2868,7 +2905,7 @@ namespace Eligor
             {
                 EPSV[0] = 0;
             }
-            IsStarter = Button1.Enabled = false;
+            LeadShadow = IsStarter = Button1.Enabled = false;
             if (Silent.Checked == false)
             {
                 RunSilent = false;
@@ -3037,6 +3074,7 @@ namespace Eligor
             switch (Pokemon[0])
             {
                 case string p when p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)": IsStarter = true; break;
+                case string p when p.Contains("Snorlax") || p.Contains("Electabuzz") || p.Contains("Pidgeotto"): LeadShadow = true; break;
             }
             DataGridView1.Columns.Clear();
             DataGridView1.Columns.Add("EncounterSeed", "Encounter Seed");
@@ -3047,6 +3085,10 @@ namespace Eligor
             }
             DataGridView1.Columns.Add("PokemonSeed", "Pokémon Seed");
             DataGridView1.Columns.Add("PID", "PID");
+            if (AllowShiny == 1 && ForceShiny > 0 && HasLock > 0)
+            {
+                DataGridView1.Columns.Add("EnemyTSV", "Enemy TSV");
+            }
             if ((uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == 0)
             {
                 DataGridView1.Columns.Add("ReRollTSV", "ReRoll TSV");
@@ -3071,7 +3113,7 @@ namespace Eligor
                 {
                     DataGridView1.Columns.Add($"PatternPokemon{i}", $"Pattern Pokemon {i}");
                 }
-                if (LeadShadow == false)
+                if (LeadShadow == false && !(AllowShiny == 1 && ForceShiny > 0))
                 {
                     DataGridView1.Columns.Add("SafetyFrames", "Safety Frames");
                 }
@@ -3147,6 +3189,15 @@ namespace Eligor
             }
         }
 
+        private void SetTID()
+        {
+            switch ((string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"])
+            {
+                case string p when p == "Meditite (XD)" || p == "Shuckle (XD)" || p == "Larvitar (XD)": TID.Enabled = false; TID.Value = 37149; break;
+                case "Elekid (XD)": TID.Enabled = false; TID.Value = 41400; break;
+            }
+        }
+
         private void InitialSeed_TextChanged(object sender, EventArgs e)
         {
             string item = InitialSeed.Text;
@@ -3163,22 +3214,6 @@ namespace Eligor
             if ((uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == 0 && (string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Umbreon (Colosseum)" && (string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Espeon (Colosseum)")
             {
                 ForceLabel.Enabled = TID_Match.Enabled = PT.Enabled = true;
-                for (uint i = 1; i <= (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"]; i++)
-                {
-                    if (i == 1) { P1.Enabled = true; }
-                    if (i == 2) { P2.Enabled = true; }
-                    if (i == 3) { P3.Enabled = true; }
-                    if (i == 4) { P4.Enabled = true; }
-                    if (i == 5) { P5.Enabled = true; }
-                }
-                for (uint i = 1; i < (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"]; i++)
-                {
-                    if (i == 1 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow1_Nature"] == 26) { P1.Enabled = false; }
-                    if (i == 2 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow2_Nature"] == 26) { P2.Enabled = false; }
-                    if (i == 3 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow3_Nature"] == 26) { P3.Enabled = false; }
-                    if (i == 4 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow4_Nature"] == 26) { P4.Enabled = false; }
-                    if (i == 5 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow5_Nature"] == 26) { P5.Enabled = false; }
-                }
             }
             else if ((uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == 1)
             {
@@ -3188,31 +3223,56 @@ namespace Eligor
                 }
                     ShinyOnly.Enabled = true;
             }
+            if ((uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == 1 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"] > 0)
+            {
+                PT.Enabled = true;
+            }
+            for (uint i = 1; i <= (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"]; i++)
+            {
+                if (i == 1) { P1.Enabled = true; }
+                if (i == 2) { P2.Enabled = true; }
+                if (i == 3) { P3.Enabled = true; }
+                if (i == 4) { P4.Enabled = true; }
+                if (i == 5) { P5.Enabled = true; }
+            }
+            for (uint i = 1; i < (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"]; i++)
+            {
+                if (i == 1 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow1_Nature"] == 26) { P1.Enabled = false; }
+                if (i == 2 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow2_Nature"] == 26) { P2.Enabled = false; }
+                if (i == 3 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow3_Nature"] == 26) { P3.Enabled = false; }
+                if (i == 4 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow4_Nature"] == 26) { P4.Enabled = false; }
+                if (i == 5 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow5_Nature"] == 26) { P5.Enabled = false; }
+            }
             switch ((uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Gender_Threshold"])
             {
                 case 0: SelectGender.SelectedIndex = 1; break;
                 case 255: SelectGender.SelectedIndex = 2; break;
-                case uint n when (n > 255): SelectGender.SelectedIndex = 0; break;
-                case uint n when (n > 0 && n < 255): SelectGender.Enabled = true; break;
+                case uint n when n > 255: SelectGender.SelectedIndex = 0; break;
+                case uint n when n > 0 && n < 255: SelectGender.Enabled = true; break;
             }
             switch ((string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"])
             {
-                case string p when (p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)"): EPSV_Label.Enabled = ETID_Check.Enabled = true; break;
+                case string p when p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)": EPSV_Label.Enabled = ETID_Check.Enabled = true; break;
             }
             if ((int)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"ShinyValue"] > -1)
             {
                 PT.Enabled = ForceLabel.Enabled = TID_Match.Enabled = false;
             }
+            SetTID();
         }
 
         private void ForceCheck()
         {
-            TID_Match.Checked = P1.Checked = P2.Checked = P3.Checked = P4.Checked = P5.Checked = PT.Checked = false;
+            if ((uint) Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == 0)
+            {
+                TID_Match.Checked = false;
+            }
+            P1.Checked = P2.Checked = P3.Checked = P4.Checked = P5.Checked = PT.Checked = false;
         }
 
         private void TID_Match_Click(object sender, EventArgs e)
         {
-            if (TID_Match.Checked == true)
+            if (TID_Match.Checked == true && (uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == 0)
             {
                 ForceCheck();
                 TID_Match.Checked = true;
@@ -3221,7 +3281,7 @@ namespace Eligor
 
         private void TID_Match_CheckStateChanged(object sender, EventArgs e)
         {
-            TSV_Label.Enabled = TSVal.Enabled = TID.Enabled = SID.Enabled = TID_Label.Enabled = SID_Label.Enabled = TID_Match.Checked;
+            TSV_Label.Enabled = TSVal.Enabled = TID.Enabled = SID.Enabled = TID_Label.Enabled = SID_Label.Enabled = TID_Match.Checked; SetTID();
         }
 
         private void ETID_Check_CheckStateChanged(object sender, EventArgs e)
