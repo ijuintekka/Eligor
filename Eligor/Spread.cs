@@ -132,15 +132,25 @@ namespace Eligor
             {
                 for (uint i = 1; i <= HasLock; i++)
                 {
-                    Line = $"{Line},{Pokemon[i]}:{PID[i]:X8}";
-                    if (IsReRoll[i] > 0) { Line = $"{Line}*ReRoll={IsReRoll[i]}"; }
+                    if (Nature[i] == 26)
+                    {
+                        Line = $"{Line},{Pokemon[i]}:RECALLED";
+                    }
+                    else
+                    {
+                        Line = $"{Line},{Pokemon[i]}:{PID[i]:X8}";
+                        if (IsReRoll[i] > 0)
+                        {
+                            Line = $"{Line}*ReRoll={IsReRoll[i]}";
+                        }
+                    }
                 }
                 if (LeadShadow == false && !(AllowShiny == 1 && ForceShiny > 0))
                 {
                     string Safety = "";
                     uint i = 0;
                     Tempseed = RNGAdv(Seedtick, 2);
-                    while (!(Gender[1] == GetGender(PID[1] = GetPID(Tempseed), GenderThreshold[1]) && Nature[1] == GetNature(PID[1])))
+                    while (!(Gender[1] == GetGender(PID[1] = GetPID(Tempseed), GenderThreshold[1]) && (Nature[1] > 24 || Nature[1] == GetNature(PID[1]))))
                     {
                         i++;
                         Safety = $"-{i}: {Tempseed.ToString("X8")};{Safety}";
@@ -250,7 +260,7 @@ namespace Eligor
                     }
                     if (Nature[i] == 26)
                     {
-                        PokemonShinyValue[i] = PID[i] = 4294967295;
+                        PokemonShinyValue[i] = 9001;
                         Tempseed = RNGAdv(Tempseed, 5);
                     }
                     else
