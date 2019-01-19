@@ -64,7 +64,6 @@ namespace Eligor
         uint ForceShiny;
         uint EeveeTID;
         uint EeveeSID;
-        uint EeveeSeed;
         uint Progval;
         uint Progtick;
         string ReRollTSV;
@@ -94,38 +93,15 @@ namespace Eligor
             return tseed;
         }
 
-        private ushort SplitAdv(uint tseed, uint frame)
-        {
-            for (uint i = 0; i < frame; i++)
-            {
-                tseed = ((tseed * 0x000343fd) + 0x00269ec3) & 0xFFFFFFFF;
-            }
-            return (ushort)(tseed >> 16);
-        }
-
-        private ushort SplitRev(uint tseed, uint frame)
-        {
-            for (uint i = 0; i < frame; i++)
-            {
-                tseed = ((tseed * 0xb9b33155) + 0xa170f641) & 0xFFFFFFFF;
-            }
-            return (ushort)(tseed >> 16);
-        }
-
         private void WriteOut()
         {
-            string Line;
+            string Line = Seedtick.ToString("X8");
             if (IsStarter == true)
             {
-                Line = string.Join(",",
-                EeveeSeed.ToString("X8"),
+                Line = string.Join(",",Line,
                 EeveeTID,
                 EeveeSID
                 );
-            }
-            else
-            {
-                Line = Seedtick.ToString("X8");
             }
             Line = string.Join(",",Line,
             PokemonSeed.ToString("X8"),
@@ -163,7 +139,7 @@ namespace Eligor
                 {
                     string Safety = "";
                     uint i = 0;
-                    Tempseed = RNGRev(Seedtick, 1);
+                    Tempseed = RNGAdv(Seedtick, 2);
                     while (!(Gender[1] == GetGender(PID[1] = GetPID(Tempseed), GenderThreshold[1]) && Nature[1] == GetNature(PID[1])))
                     {
                         i++;
@@ -193,13 +169,14 @@ namespace Eligor
 
         private void GetIVs(uint call)
         {
-            uint IVCall = (uint)((SplitAdv(call, 1) << 16) & 0xFFFF0000) + SplitAdv(call, 2);
-            IVs[0] = (int)(IVCall >> 16) & 31;  //HP
-            IVs[1] = (int)(IVCall >> 21) & 31;  //ATTACK
-            IVs[2] = (int)(IVCall >> 26) & 31;  //DEFENSE
-            IVs[3] = (int)IVCall & 31;          //SPEED
-            IVs[4] = (int)(IVCall >> 5) & 31;   //SPECIAL ATTACK
-            IVs[5] = (int)(IVCall >> 10) & 31;  //SPECIAL DEFENSE
+            call = RNGAdv(call, 1);
+            IVs[0] = (int)(call >> 16) & 31;  //HP
+            IVs[1] = (int)(call >> 21) & 31;  //ATTACK
+            IVs[2] = (int)(call >> 26) & 31;  //DEFENSE
+            call = RNGAdv(call, 1);
+            IVs[3] = (int)(call >> 16) & 31;  //SPEED
+            IVs[4] = (int)(call >> 21) & 31;  //SPECIAL ATTACK
+            IVs[5] = (int)(call >> 26) & 31;  //SPECIAL DEFENSE
         }
 
         private void GetHiddenPowerType()
@@ -214,7 +191,10 @@ namespace Eligor
 
         private uint GetPID(uint call)
         {
-            return ((uint)(SplitAdv(call, 4) << 16) & 0xFFFF0000) + SplitAdv(call, 5);
+            call = RNGAdv(call, 4);
+            uint pid = call & 0xFFFF0000;
+            call = RNGAdv(call, 1);
+            return pid + (call >> 16);
         }
 
         private void GetCharacteristic(uint call)
@@ -341,7 +321,6 @@ namespace Eligor
 
         private void SolveForceColoLock()
         {
-            EnemyTSV = GetSV((uint)(SplitRev(Tempseed, 3) << 16 & 0xFFFF0000) + SplitRev(Tempseed, 2));
             for (uint i = 1; i <= HasLock; i++)
             {
                 PID[i] = GetPID(Tempseed);
@@ -374,7 +353,11 @@ namespace Eligor
 
         private void SpreadFinder()
         {
-            Tempseed = RNGAdv(Seedtick, 3);
+            EeveeTID = Seedtick >> 16;
+            Tempseed = RNGAdv(Seedtick, 1);
+            EeveeSID = Tempseed >> 16;
+            EnemyTSV = (EeveeTID ^ EeveeSID) >> 3;
+            Tempseed = RNGAdv(Tempseed, 2);
             if (HasLock > 0)
             {
                 if (AllowShiny > 0 && ForceShiny > 0)
@@ -388,20 +371,7 @@ namespace Eligor
             }
             else if (IsStarter == true)
             {
-                EeveeSeed = Tempseed;
-                for (uint i = 0; i < 3; i++)
-                {
-                    EeveeSeed = ((EeveeSeed * 0xb9b33155) + 0xa170f641) & 0xFFFFFFFF;
-                    if (i == 1)
-                    {
-                        EeveeSID = EeveeSeed >> 16;
-                    }
-                    if (i == 2)
-                    {
-                        EeveeTID = EeveeSeed >> 16;
-                    }
-                }
-                TrainerShinyValue = (EeveeTID ^ EeveeSID) >> 3;
+                TrainerShinyValue = EnemyTSV;
                 if (StarterTID[0] == 1 && StarterTID[1] != EeveeTID)
                 {
                     Halt = 1;
@@ -3039,6 +3009,10 @@ namespace Eligor
             {
                 Startseed = uint.Parse(InitialSeed.Text, System.Globalization.NumberStyles.AllowHexSpecifier);
             }
+            if (ETID_Check.Checked && (Startseed < (uint)ETID_Val.Value << 16 || Startseed > (((uint)ETID_Val.Value << 16) + 65535)))
+            {
+                Startseed = (uint)ETID_Val.Value << 16;
+            }
             if (EnableLimit.Checked == true && ResultsLimit.Value > 0)
             {
                 Maxseed = Startseed + (uint)ResultsLimit.Value - 1;
@@ -3048,6 +3022,11 @@ namespace Eligor
             {
                 Maxseed = Startseed + 4294967295;
                 Progval = 42524427;
+            }
+            if (ETID_Check.Checked && ((EnableLimit.Checked && ResultsLimit.Value > 65536) || EnableLimit.Checked == false))
+            {
+                Maxseed = Startseed + 65535;
+                Progval = 648;
             }
             Progtick = 0;
             if (TID_Match.Checked == true)
