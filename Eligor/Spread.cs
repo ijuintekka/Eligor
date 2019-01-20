@@ -260,7 +260,7 @@ namespace Eligor
                     }
                     if (Nature[i] == 26)
                     {
-                        PokemonShinyValue[i] = 9001;
+                        PokemonShinyValue[i] = 9002;
                         Tempseed = RNGAdv(Tempseed, 5);
                     }
                     else
