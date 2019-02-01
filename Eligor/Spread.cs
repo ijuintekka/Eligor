@@ -95,98 +95,99 @@ namespace Eligor
 
         private void WriteOut()
         {
-            string Line = Seedtick.ToString("X8");
+            List<string> Line = new List<string> { $"{Seedtick:X8}" };
             if (IsStarter == true)
             {
-                Line = string.Join(",",Line,
-                EeveeTID,
-                EeveeSID
-                );
+                Line.Add($"{EeveeTID}");
+                Line.Add($"{EeveeSID}");
             }
-            Line = string.Join(",",Line,
-            PokemonSeed.ToString("X8"),
-            PID[0].ToString("X8")
-            );
+            Line.Add($"{PokemonSeed:X8}");
             if (IsReRoll[0] > 0)
             {
-                Line = $"{Line}*ReRoll={IsReRoll[0]}";
+                Line.Add($"{PID[0]:X8}*ReRoll={IsReRoll[0]}");
+            }
+            else
+            {
+                Line.Add($"{PID[0]:X8}");
             }
             if (ForceShiny > 0 && AllowShiny == 1 && HasLock > 0)
             {
-                Line = $"{Line},{EnemyTSV}";
+                Line.Add($"{EnemyTSV}");
             }
-            Line = string.Join(",",Line,
-            ReRollTSV,
-            NatureText[Nature[0]],
-            Gender[0],
-            IVs[0],
-            IVs[1],
-            IVs[2],
-            IVs[4],
-            IVs[5],
-            IVs[3],
-            $"{HiddenPowerText[HiddenPowerType]}:{HiddenPowerStrength}",
-            CharacteristicText[Characteristic]
-            );
+            if (AllowShiny == 1 && ReRollTSV == "None")
+            {
+                ReRollTSV = $"{GetSV(PID[0])}";
+            }
+            Line.Add($"{ReRollTSV}");
+            Line.Add($"{NatureText[Nature[0]]}");
+            Line.Add($"{Gender[0]}");
+            Line.Add($"{IVs[0]}");
+            Line.Add($"{IVs[1]}");
+            Line.Add($"{IVs[2]}");
+            Line.Add($"{IVs[4]}");
+            Line.Add($"{IVs[5]}");
+            Line.Add($"{IVs[3]}");
+            Line.Add($"{HiddenPowerText[HiddenPowerType]}:{HiddenPowerStrength}");
+            Line.Add($"{CharacteristicText[Characteristic]}");
             if (HasLock > 0)
             {
                 for (uint i = 1; i <= HasLock; i++)
                 {
                     if (Nature[i] == 26)
                     {
-                        Line = $"{Line},{Pokemon[i]}:RECALLED";
+                        Line.Add($"{Pokemon[i]}:RECALLED");
                     }
                     else
                     {
-                        Line = $"{Line},{Pokemon[i]}:{PID[i]:X8}";
                         if (IsReRoll[i] > 0)
                         {
-                            Line = $"{Line}*ReRoll={IsReRoll[i]}";
+                            Line.Add($"{Pokemon[i]}:{PID[i]:X8}*ReRoll={IsReRoll[i]}");
+                        }
+                        else
+                        {
+                            Line.Add($"{Pokemon[i]}:{PID[i]:X8}");
                         }
                     }
                 }
                 if (LeadShadow == false && !(AllowShiny == 1 && ForceShiny > 0))
                 {
-                    string Safety = "";
-                    uint i = 0;
                     Tempseed = RNGAdv(Seedtick, 2);
+                    List<string> Safety = new List<string> {};
+                    uint i = 0;
                     while (!(Gender[1] == GetGender(PID[1] = GetPID(Tempseed), GenderThreshold[1]) && (Nature[1] > 24 || Nature[1] == GetNature(PID[1]))))
                     {
                         i++;
-                        Safety = $"-{i}: {Tempseed.ToString("X8")};{Safety}";
+                        Safety.Add($"-{i}: {Tempseed:X8}");
                         Tempseed = RNGRev(Tempseed, 1);
                     }
                     if (i > 0)
                     {
-                        Line = $"{Line},{i} Safety Frames: {Safety}";
+                        Line.Add($"{i} Safety Frames: {string.Join(";", Safety.ToArray().Reverse())}");
                     }
                     else
                     {
-                        Line = $"{Line},No Safety Frames.";
+                        Line.Add($"No Safety Frames.");
                     }
                 }
             }
             if (RunSilent == false)
             {
-                string[] delim = Line.Split(',');
-                DataGridView1.Rows.Add(delim);
+                DataGridView1.Rows.Add(Line.ToArray());
             }
             if (OutputCSV == true)
             {
-                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + Date + ".csv", Line + "\r");
+                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + Date + ".csv", string.Join(",", Line.ToArray()) + "\r\n");
             }
         }
 
         private void GetIVs(uint call)
         {
-            call = RNGAdv(call, 1);
-            IVs[0] = (int)(call >> 16) & 31;  //HP
-            IVs[1] = (int)(call >> 21) & 31;  //ATTACK
-            IVs[2] = (int)(call >> 26) & 31;  //DEFENSE
-            call = RNGAdv(call, 1);
-            IVs[3] = (int)(call >> 16) & 31;  //SPEED
-            IVs[4] = (int)(call >> 21) & 31;  //SPECIAL ATTACK
-            IVs[5] = (int)(call >> 26) & 31;  //SPECIAL DEFENSE
+            IVs[0] = (int)((call = RNGAdv(call, 1)) >> 16) & 31;  //HP
+            IVs[1] = (int)(call >> 21) & 31;                      //ATTACK
+            IVs[2] = (int)(call >> 26) & 31;                      //DEFENSE
+            IVs[3] = (int)((call = RNGAdv(call, 1)) >> 16) & 31;  //SPEED
+            IVs[4] = (int)(call >> 21) & 31;                      //SPECIAL ATTACK
+            IVs[5] = (int)(call >> 26) & 31;                      //SPECIAL DEFENSE
         }
 
         private void GetHiddenPowerType()
@@ -201,10 +202,7 @@ namespace Eligor
 
         private uint GetPID(uint call)
         {
-            call = RNGAdv(call, 4);
-            uint pid = call & 0xFFFF0000;
-            call = RNGAdv(call, 1);
-            return pid + (call >> 16);
+            return ((call = RNGAdv(call, 4)) & 0xFFFF0000) + (RNGAdv(call, 1) >> 16);
         }
 
         private void GetCharacteristic(uint call)
@@ -363,10 +361,7 @@ namespace Eligor
 
         private void SpreadFinder()
         {
-            EeveeTID = Seedtick >> 16;
-            Tempseed = RNGAdv(Seedtick, 1);
-            EeveeSID = Tempseed >> 16;
-            EnemyTSV = (EeveeTID ^ EeveeSID) >> 3;
+            EnemyTSV = ((EeveeTID = Seedtick >> 16) ^ (EeveeSID = (Tempseed = RNGAdv(Seedtick, 1)) >> 16)) >> 3;
             Tempseed = RNGAdv(Tempseed, 2);
             if (HasLock > 0)
             {
@@ -3120,7 +3115,7 @@ namespace Eligor
                 {
                     Line = Line + "," + DataGridView1.Columns[i].Name;
                 }
-                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + Date + ".csv", Line + "\r" + Pokemon[0] + "\r");
+                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + Date + ".csv", Line + "\r\n" + Pokemon[0] + "\r\n");
             }
             Cursor = Cursors.WaitCursor;
             Halt = 0;
