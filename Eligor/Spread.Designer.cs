@@ -928,8 +928,8 @@
             this.ResultsLimit.Enabled = false;
             this.ResultsLimit.Location = new System.Drawing.Point(269, 13);
             this.ResultsLimit.Maximum = new decimal(new int[] {
-            -1,
             0,
+            1,
             0,
             0});
             this.ResultsLimit.Minimum = new decimal(new int[] {
