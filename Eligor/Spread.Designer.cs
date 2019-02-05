@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Spread));
             this.Button1 = new System.Windows.Forms.Button();
             this.ComboBox1 = new System.Windows.Forms.ComboBox();
-            this.DataGridView1 = new System.Windows.Forms.DataGridView();
+            this.ResultsGrid = new System.Windows.Forms.DataGridView();
             this.label10 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
@@ -87,7 +87,7 @@
             this.Silent = new System.Windows.Forms.CheckBox();
             this.InitialSeed = new System.Windows.Forms.TextBox();
             this.label22 = new System.Windows.Forms.Label();
-            this.ResultsLimit = new System.Windows.Forms.NumericUpDown();
+            this.SeedLimit = new System.Windows.Forms.NumericUpDown();
             this.EnableLimit = new System.Windows.Forms.CheckBox();
             this.CSV = new System.Windows.Forms.CheckBox();
             this.Label13 = new System.Windows.Forms.Label();
@@ -100,12 +100,17 @@
             this.HIDMinLabel = new System.Windows.Forms.LinkLabel();
             this.HIDMaxLabel = new System.Windows.Forms.LinkLabel();
             this.GenderLabel = new System.Windows.Forms.Label();
-            this.BackgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.ProgressWorker = new System.ComponentModel.BackgroundWorker();
             this.VersionLabel = new System.Windows.Forms.Label();
+            this.SpreadWorker = new System.ComponentModel.BackgroundWorker();
+            this.LimitResults = new System.Windows.Forms.CheckBox();
+            this.ResultLimit = new System.Windows.Forms.NumericUpDown();
+            this.GroupBox3 = new System.Windows.Forms.GroupBox();
+            this.SaveResults = new System.Windows.Forms.Button();
             this.CharacteristicComboBox = new CheckComboBox.CheckedComboBox();
             this.HiddenPowerComboBox = new CheckComboBox.CheckedComboBox();
             this.NatureComboBox = new CheckComboBox.CheckedComboBox();
-            ((System.ComponentModel.ISupportInitialize)(this.DataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ResultsGrid)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SPE_Max)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SPD_Max)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SPA_Max)).BeginInit();
@@ -129,17 +134,19 @@
             ((System.ComponentModel.ISupportInitialize)(this.EPSV_Val)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.TSVal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ETID_Val)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ResultsLimit)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SeedLimit)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ResultLimit)).BeginInit();
+            this.GroupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // Button1
             // 
             this.Button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.Button1.Location = new System.Drawing.Point(599, 131);
+            this.Button1.Location = new System.Drawing.Point(5, 36);
             this.Button1.Margin = new System.Windows.Forms.Padding(2);
             this.Button1.Name = "Button1";
-            this.Button1.Size = new System.Drawing.Size(239, 133);
+            this.Button1.Size = new System.Drawing.Size(124, 82);
             this.Button1.TabIndex = 1;
             this.Button1.Text = "GO";
             this.Button1.UseVisualStyleBackColor = true;
@@ -158,12 +165,13 @@
             this.ComboBox1.TabIndex = 2;
             this.ComboBox1.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
             // 
-            // DataGridView1
+            // ResultsGrid
             // 
-            this.DataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.ResultsGrid.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.DataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.ResultsGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
+            this.ResultsGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle1.Font = new System.Drawing.Font("Courier New", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -171,12 +179,12 @@
             dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
             dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.DataGridView1.DefaultCellStyle = dataGridViewCellStyle1;
-            this.DataGridView1.Location = new System.Drawing.Point(9, 269);
-            this.DataGridView1.Name = "DataGridView1";
-            this.DataGridView1.RowHeadersVisible = false;
-            this.DataGridView1.Size = new System.Drawing.Size(829, 119);
-            this.DataGridView1.TabIndex = 3;
+            this.ResultsGrid.DefaultCellStyle = dataGridViewCellStyle1;
+            this.ResultsGrid.Location = new System.Drawing.Point(9, 269);
+            this.ResultsGrid.Name = "ResultsGrid";
+            this.ResultsGrid.RowHeadersVisible = false;
+            this.ResultsGrid.Size = new System.Drawing.Size(829, 119);
+            this.ResultsGrid.TabIndex = 3;
             // 
             // label10
             // 
@@ -923,24 +931,24 @@
             this.label22.TabIndex = 96;
             this.label22.Text = "Initial seed (Hex):";
             // 
-            // ResultsLimit
+            // SeedLimit
             // 
-            this.ResultsLimit.Enabled = false;
-            this.ResultsLimit.Location = new System.Drawing.Point(269, 13);
-            this.ResultsLimit.Maximum = new decimal(new int[] {
+            this.SeedLimit.Enabled = false;
+            this.SeedLimit.Location = new System.Drawing.Point(269, 13);
+            this.SeedLimit.Maximum = new decimal(new int[] {
             0,
             1,
             0,
             0});
-            this.ResultsLimit.Minimum = new decimal(new int[] {
+            this.SeedLimit.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.ResultsLimit.Name = "ResultsLimit";
-            this.ResultsLimit.Size = new System.Drawing.Size(87, 20);
-            this.ResultsLimit.TabIndex = 94;
-            this.ResultsLimit.Value = new decimal(new int[] {
+            this.SeedLimit.Name = "SeedLimit";
+            this.SeedLimit.Size = new System.Drawing.Size(87, 20);
+            this.SeedLimit.TabIndex = 94;
+            this.SeedLimit.Value = new decimal(new int[] {
             10000,
             0,
             0,
@@ -1075,19 +1083,85 @@
             this.GenderLabel.TabIndex = 111;
             this.GenderLabel.Text = "Gender:";
             // 
-            // BackgroundWorker1
+            // ProgressWorker
             // 
-            this.BackgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorker1_DoWork_1);
+            this.ProgressWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.ProgressWorker_DoWork);
             // 
             // VersionLabel
             // 
             this.VersionLabel.AutoSize = true;
-            this.VersionLabel.Location = new System.Drawing.Point(504, 242);
+            this.VersionLabel.Location = new System.Drawing.Point(498, 242);
             this.VersionLabel.Name = "VersionLabel";
-            this.VersionLabel.Size = new System.Drawing.Size(63, 13);
+            this.VersionLabel.Size = new System.Drawing.Size(69, 13);
             this.VersionLabel.TabIndex = 112;
-            this.VersionLabel.Text = "Version 1.9.";
+            this.VersionLabel.Text = "Version 1.10.";
             this.VersionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // SpreadWorker
+            // 
+            this.SpreadWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.SpreadWorker_DoWork);
+            this.SpreadWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.SpreadWorker_RunWorkerCompleted);
+            // 
+            // LimitResults
+            // 
+            this.LimitResults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LimitResults.AutoSize = true;
+            this.LimitResults.Checked = true;
+            this.LimitResults.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.LimitResults.Location = new System.Drawing.Point(6, 12);
+            this.LimitResults.Name = "LimitResults";
+            this.LimitResults.Size = new System.Drawing.Size(125, 17);
+            this.LimitResults.TabIndex = 113;
+            this.LimitResults.Text = "Results Display Limit:";
+            this.LimitResults.UseVisualStyleBackColor = true;
+            this.LimitResults.CheckStateChanged += new System.EventHandler(this.LimitResults_CheckStateChanged);
+            // 
+            // ResultLimit
+            // 
+            this.ResultLimit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.ResultLimit.Location = new System.Drawing.Point(137, 11);
+            this.ResultLimit.Maximum = new decimal(new int[] {
+            0,
+            1,
+            0,
+            0});
+            this.ResultLimit.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.ResultLimit.Name = "ResultLimit";
+            this.ResultLimit.Size = new System.Drawing.Size(121, 20);
+            this.ResultLimit.TabIndex = 114;
+            this.ResultLimit.Value = new decimal(new int[] {
+            1000000,
+            0,
+            0,
+            0});
+            // 
+            // GroupBox3
+            // 
+            this.GroupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.GroupBox3.Controls.Add(this.SaveResults);
+            this.GroupBox3.Controls.Add(this.ResultLimit);
+            this.GroupBox3.Controls.Add(this.Button1);
+            this.GroupBox3.Controls.Add(this.LimitResults);
+            this.GroupBox3.Location = new System.Drawing.Point(573, 140);
+            this.GroupBox3.Name = "GroupBox3";
+            this.GroupBox3.Size = new System.Drawing.Size(264, 123);
+            this.GroupBox3.TabIndex = 115;
+            this.GroupBox3.TabStop = false;
+            // 
+            // SaveResults
+            // 
+            this.SaveResults.Enabled = false;
+            this.SaveResults.Location = new System.Drawing.Point(134, 36);
+            this.SaveResults.Name = "SaveResults";
+            this.SaveResults.Size = new System.Drawing.Size(124, 82);
+            this.SaveResults.TabIndex = 116;
+            this.SaveResults.Text = "Save Results";
+            this.SaveResults.UseVisualStyleBackColor = true;
+            this.SaveResults.Click += new System.EventHandler(this.SaveResults_Click);
             // 
             // CharacteristicComboBox
             // 
@@ -1142,7 +1216,6 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 400);
-            this.Controls.Add(this.VersionLabel);
             this.Controls.Add(this.GenderLabel);
             this.Controls.Add(this.NatureLabel);
             this.Controls.Add(this.HiddenPowerLabel);
@@ -1154,7 +1227,7 @@
             this.Controls.Add(this.Silent);
             this.Controls.Add(this.InitialSeed);
             this.Controls.Add(this.label22);
-            this.Controls.Add(this.ResultsLimit);
+            this.Controls.Add(this.SeedLimit);
             this.Controls.Add(this.EnableLimit);
             this.Controls.Add(this.CSV);
             this.Controls.Add(this.GroupBox1);
@@ -1165,18 +1238,19 @@
             this.Controls.Add(this.CharacteristicComboBox);
             this.Controls.Add(this.HiddenPowerComboBox);
             this.Controls.Add(this.NatureComboBox);
-            this.Controls.Add(this.DataGridView1);
+            this.Controls.Add(this.ResultsGrid);
             this.Controls.Add(this.ComboBox1);
-            this.Controls.Add(this.Button1);
             this.Controls.Add(this.HIDMaxLabel);
             this.Controls.Add(this.HIDMinLabel);
             this.Controls.Add(this.GroupBox2);
+            this.Controls.Add(this.GroupBox3);
+            this.Controls.Add(this.VersionLabel);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(2);
             this.MinimumSize = new System.Drawing.Size(836, 45);
             this.Name = "Spread";
             this.Text = "Eligor";
-            ((System.ComponentModel.ISupportInitialize)(this.DataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ResultsGrid)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SPE_Max)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SPD_Max)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SPA_Max)).EndInit();
@@ -1202,8 +1276,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.EPSV_Val)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.TSVal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ETID_Val)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.ResultsLimit)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SeedLimit)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.ResultLimit)).EndInit();
+            this.GroupBox3.ResumeLayout(false);
+            this.GroupBox3.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -1212,7 +1289,6 @@
         #endregion
         private System.Windows.Forms.Button Button1;
         private System.Windows.Forms.ComboBox ComboBox1;
-        private System.Windows.Forms.DataGridView DataGridView1;
         private CheckComboBox.CheckedComboBox NatureComboBox;
         private CheckComboBox.CheckedComboBox HiddenPowerComboBox;
         private CheckComboBox.CheckedComboBox CharacteristicComboBox;
@@ -1261,7 +1337,7 @@
         private System.Windows.Forms.CheckBox Silent;
         private System.Windows.Forms.TextBox InitialSeed;
         private System.Windows.Forms.Label label22;
-        private System.Windows.Forms.NumericUpDown ResultsLimit;
+        private System.Windows.Forms.NumericUpDown SeedLimit;
         private System.Windows.Forms.CheckBox EnableLimit;
         private System.Windows.Forms.CheckBox CSV;
         private System.Windows.Forms.Label Label13;
@@ -1279,12 +1355,18 @@
         private System.Windows.Forms.LinkLabel HIDMinLabel;
         private System.Windows.Forms.LinkLabel HIDMaxLabel;
         private System.Windows.Forms.Label GenderLabel;
-        private System.ComponentModel.BackgroundWorker BackgroundWorker1;
+        private System.ComponentModel.BackgroundWorker ProgressWorker;
         private System.Windows.Forms.Label TSV_Label;
         private System.Windows.Forms.NumericUpDown TSVal;
         private System.Windows.Forms.NumericUpDown EPSV_Val;
         private System.Windows.Forms.CheckBox EPSV_Label;
         private System.Windows.Forms.Label VersionLabel;
+        private System.ComponentModel.BackgroundWorker SpreadWorker;
+        public System.Windows.Forms.DataGridView ResultsGrid;
+        private System.Windows.Forms.CheckBox LimitResults;
+        private System.Windows.Forms.NumericUpDown ResultLimit;
+        private System.Windows.Forms.GroupBox GroupBox3;
+        private System.Windows.Forms.Button SaveResults;
     }
 }
 

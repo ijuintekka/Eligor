@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,10 +15,11 @@ namespace Eligor
         DataTable Pokemon_List = new DataTable();
         DataTable Results = new DataTable();
         Progress ProgBar = new Progress();
-        string[] CharacteristicText = { "Loves to eat.", "Takes plenty of siestas.", "Nods off a lot.", "Scatters things often.", "Likes to relax.", "Proud of its power.", "Likes to thrash about.", "A little quick tempered.", "Likes to fight.", "Quick tempered.", "Sturdy body.", "Capable of taking hits.", "Highly persistent.", "Good endurance.", "Good perseverance.", "Likes to run.", "Alert to sounds.", "Impetuous and silly.", "Somewhat of a clown.", "Quick to flee.", "Highly curious.", "Mischievous.", "Thoroughly cunning.", "Often lost in thought.", "Very finicky.", "Strong willed.", "Somewhat vain.", "Strongly defiant.", "Hates to lose.", "Somewhat stubborn." };
+        StreamWriter Output;
+        string[] CharacteristicText = { "Loves to eat", "Takes plenty of siestas", "Nods off a lot", "Scatters things often", "Likes to relax", "Proud of its power", "Likes to thrash about", "A little quick tempered", "Likes to fight", "Quick tempered", "Sturdy body", "Capable of taking hits", "Highly persistent", "Good endurance", "Good perseverance", "Likes to run", "Alert to sounds", "Impetuous and silly", "Somewhat of a clown", "Quick to flee", "Highly curious", "Mischievous", "Thoroughly cunning", "Often lost in thought", "Very finicky", "Strong willed", "Somewhat vain", "Strongly defiant", "Hates to lose", "Somewhat stubborn" };
         string[] NatureText = { "Hardy", "Lonely", "Brave", "Adamant", "Naughty", "Bold", "Docile", "Relaxed", "Impish", "Lax", "Timid", "Hasty", "Serious", "Jolly", "Naive", "Modest", "Mild", "Quiet", "Bashful", "Rash", "Calm", "Gentle", "Sassy", "Careful", "Quirky" };
         string[] HiddenPowerText = { "Fighting", "Flying", "Poison", "Ground", "Rock", "Bug", "Ghost", "Steel", "Fire", "Water", "Grass", "Electric", "Psychic", "Ice", "Dragon", "Dark" };
-        public static uint Halt;
+        uint Halt;
         uint PokemonSeed;
         uint[] PID = { 0, 0, 0, 0, 0, 0 };
         uint Characteristic;
@@ -65,16 +66,16 @@ namespace Eligor
         uint ForceShiny;
         uint EeveeTID;
         uint EeveeSID;
-        uint Progval;
         string ReRollTSV;
         bool RunSilent;
         bool OutputCSV;
-        string Date;
+        string OutputFile;
         bool LeadShadow;
         string[] Pokemon = { "", "", "", "", "", "" };
         decimal[] EPSV = { 0, 0 };
         uint EnemyTSV;
-        uint ResCount;
+        decimal ResCount;
+        decimal Limit;
 
         private uint RNGAdv(uint tseed, uint frame)
         {
@@ -164,17 +165,34 @@ namespace Eligor
                     }
                     else
                     {
-                        Line.Add("No Safety Frames.");
+                        Line.Add("No Safety Frames");
                     }
                 }
             }
             if (RunSilent == false)
             {
                 Results.Rows.Add(Line.ToArray());
+                if (Limit > 0 && ResCount > Limit)
+                {
+                    Results.Rows.Add(ReRollTSV = $"Too many results to display. Display terminated at seed: {Seedtick:X8}");
+                    if (OutputCSV == false)
+                    {
+                        MessageBox.Show(ReRollTSV, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        Halt = 5;
+                    }
+                    else
+                    {
+                        RunSilent = true;
+                        Results.Rows.Add("See CSV for further output.");
+                    }
+                }
             }
             if (OutputCSV == true)
             {
-                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + Date + ".csv", string.Join(",", Line.ToArray()) + "\r\n");
+                using (Output = new StreamWriter(OutputFile, append: true))
+                {
+                    Output.WriteLine(string.Join(",", Line.ToArray()));
+                }
             }
             ResCount++;
         }
@@ -2868,9 +2886,15 @@ namespace Eligor
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            BackgroundWorker1.RunWorkerAsync();
-            SelectedPokemon = ComboBox1.SelectedIndex;
-            Pokemon[0] = (string)Pokemon_List.Rows[SelectedPokemon]["Pokemon"];
+            Pokemon[0] = (string)Pokemon_List.Rows[SelectedPokemon = ComboBox1.SelectedIndex]["Pokemon"];
+            if (LimitResults.Checked == true)
+            {
+                Limit = ResultLimit.Value;
+            }
+            else
+            {
+                Limit = 0;
+            }
             if (EPSV_Label.Checked == true)
             {
                 EPSV[0] = 1; EPSV[1] = EPSV_Val.Value;
@@ -2879,7 +2903,7 @@ namespace Eligor
             {
                 EPSV[0] = 0;
             }
-            LeadShadow = IsStarter = Button1.Enabled = false;
+            LeadShadow = IsStarter = Button1.Enabled = SaveResults.Enabled = false;
             if (Silent.Checked == false)
             {
                 RunSilent = false;
@@ -3017,15 +3041,15 @@ namespace Eligor
             {
                 Startseed = (uint)ETID_Val.Value << 16;
             }
-            if (EnableLimit.Checked == true && ResultsLimit.Value > 0)
+            if (EnableLimit.Checked == true && SeedLimit.Value > 0)
             {
-                Maxseed = Startseed + (uint)(ResultsLimit.Value - 1);
+                Maxseed = Startseed + (uint)(SeedLimit.Value - 1);
             }
             else
             {
                 Maxseed = Startseed + 4294967295;
             }
-            if (ETID_Check.Checked && ((EnableLimit.Checked && ResultsLimit.Value > 65536) || EnableLimit.Checked == false))
+            if (ETID_Check.Checked && ((EnableLimit.Checked && SeedLimit.Value > 65536) || EnableLimit.Checked == false))
             {
                 Maxseed = Startseed + 65535;
             }
@@ -3055,106 +3079,105 @@ namespace Eligor
                 case string p when p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)": IsStarter = true; break;
                 case string p when p.Contains("Snorlax") || p.Contains("Electabuzz") || p.Contains("Pidgeotto"): LeadShadow = true; break;
             }
-            DataGridView1.Columns.Clear();
-            DataGridView1.Columns.Add("EncounterSeed", "Encounter Seed");
+            ResultsGrid.DataSource = null;
+            ResultsGrid.Columns.Clear();
+            ResultsGrid.AutoGenerateColumns = true;
+            Results.Dispose();
+            Results = new DataTable();
+            Results.Columns.Add("Encounter Seed");
             if (IsStarter == true)
             {
-                DataGridView1.Columns.Add("StarterTID", "Trainer ID");
-                DataGridView1.Columns.Add("StarterSID", "Secret ID");
+                Results.Columns.Add("Trainer ID");
+                Results.Columns.Add("Secret ID");
             }
-            DataGridView1.Columns.Add("PokemonSeed", "Pokémon Seed");
-            DataGridView1.Columns.Add("PID", "PID");
+            Results.Columns.Add("Pokemon Seed");
+            Results.Columns.Add("PID");
             if (AllowShiny == 1 && ForceShiny > 0 && HasLock > 0)
             {
-                DataGridView1.Columns.Add("EnemyTSV", "Enemy TSV");
+                Results.Columns.Add("Enemy TSV");
             }
             if ((uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == 0)
             {
-                DataGridView1.Columns.Add("ReRollTSV", "ReRoll TSV");
+                Results.Columns.Add("ReRoll TSV");
             }
             else
             {
-                DataGridView1.Columns.Add("ShinyTSV", "Shiny TSV");
+                Results.Columns.Add("Shiny TSV");
             }
-            DataGridView1.Columns.Add("Nature", "Nature");
-            DataGridView1.Columns.Add("Gender", "Gender");
-            DataGridView1.Columns.Add("HP", "HP");
-            DataGridView1.Columns.Add("Attack", "Attack");
-            DataGridView1.Columns.Add("Defense", "Defense");
-            DataGridView1.Columns.Add("SpecialAttack", "Special Attack");
-            DataGridView1.Columns.Add("SpecialDefense", "Special Defense");
-            DataGridView1.Columns.Add("Speed", "Speed");
-            DataGridView1.Columns.Add("HiddenPower", "Hidden Power");
-            DataGridView1.Columns.Add("Characteristic", "Characteristic");
+            Results.Columns.Add("Nature");
+            Results.Columns.Add("Gender");
+            Results.Columns.Add("HP");
+            Results.Columns.Add("Attack");
+            Results.Columns.Add("Defense");
+            Results.Columns.Add("Special Attack");
+            Results.Columns.Add("Special Defense");
+            Results.Columns.Add("Speed");
+            Results.Columns.Add("Hidden Power");
+            Results.Columns.Add("Characteristic");
             if (HasLock > 0)
             {
                 for (uint i = 1; i <= HasLock; i++)
                 {
-                    DataGridView1.Columns.Add($"PatternPokemon{i}", $"Pattern Pokemon {i}");
+                    Results.Columns.Add($"Pattern Pokemon {i}");
                 }
                 if (LeadShadow == false && !(AllowShiny == 1 && ForceShiny > 0))
                 {
-                    DataGridView1.Columns.Add("SafetyFrames", "Safety Frames");
+                    Results.Columns.Add("Safety Frames");
                 }
             }
             if (RunSilent == true)
             {
-                DataGridView1.Rows.Add("Running silently. Check CSV for output...");
+                ResultsGrid.Columns.Add("", "");
+                ResultsGrid.Rows.Add("Running silently. Check CSV for output...");
             }
             Seedtick = Startseed;
-            Results = new DataTable();
-            List<string> Line = new List<string> { };
-            for (int i = 0; i < DataGridView1.ColumnCount; i++)
-            {
-                Results.Columns.Add(DataGridView1.Columns[i].Name);
-                Line.Add(DataGridView1.Columns[i].Name);
-            }
-
+            ResCount = Halt = 0;
             if (OutputCSV == true)
             {
-                System.IO.File.AppendAllText("Results(" + Pokemon[0] + ") " + (Date = DateTime.Now.ToString("yyyyMMddhhmmss")) + ".csv", string.Join(",", Line.ToArray()) + "\r\n" + Pokemon[0] + "\r\n");
-            }
-            Cursor = Cursors.WaitCursor;
-            ResCount = Halt = 0;
-            ProgBar.Invoke(new Action(() =>
-            {
-                ProgBar.ProgressBar1.Value = 0;
-                ProgBar.ProgressBar1.Maximum = (int)Math.Max(1, Math.Min(2147483647, (Maxseed - Startseed) / 2));
-                ProgBar.Cancel.Enabled = true;
-                ProgBar.Top = Top + (Height / 2) - 52;
-                ProgBar.Left = Left + (Width / 2) - 119;
-                ProgBar.SeedCount.Text = $"{Seedtick:X8}";
-                ProgBar.ResultsCount.Text = "0";
-                ProgBar.Visible = true;
-            } ));
-            Progval = 13107;
-            while ((Maxseed - Startseed) % Progval != 0)
-            {
-                Progval--;
-            }
-            while (Seedtick != Maxseed && Halt != 5)
-            {
-                if (ProgBar.Cancel.Enabled == true)
+                SaveFileDialog svf = new SaveFileDialog();
+                svf.Filter = "Saves As (*.csv;*.txt)|*.csv;*.txt";
+                svf.FileName = $"Results({Pokemon[0]}) {DateTime.Now.ToString("yyyyMMddhhmmss")}";
+                if (svf.ShowDialog() == DialogResult.OK)
                 {
-                    StartSearch();
+                    StringBuilder columns = new StringBuilder();
+                    for (int i = 0; i < Results.Columns.Count; i++)
+                    {
+                        columns.Append(Results.Columns[i]);
+                        if (i < Results.Columns.Count - 1)
+                        {
+                            columns.Append(",");
+                        }
+                    }
+                    using (Output = new StreamWriter(OutputFile = svf.FileName))
+                    {
+                        Output.WriteLine(columns + "\r\n" + Pokemon[0]);
+                    }
                 }
                 else
                 {
                     Halt = 5;
                 }
-                Seedtick++;
             }
-            if (Halt != 5)
+            if (Halt == 0)
             {
-                StartSearch();
+                ProgressWorker.RunWorkerAsync(); 
+                while (ProgBar.ProgReady == false){}
+                ProgBar.Invoke(new Action(() =>
+                {
+                    ProgBar.ProgressBar1.Value = 0;
+                    ProgBar.ProgressBar1.Maximum = (int)Math.Max(1, Math.Min(2147483647, (Maxseed - Startseed) / 2));
+                    ProgBar.Cancel.Enabled = true;
+                    ProgBar.Top = Top;
+                    ProgBar.Left = Left;
+                    ProgBar.SeedCount.Text = $"{Seedtick:X8}";
+                    ProgBar.ResultsCount.Text = "0";
+                }));
+                SpreadWorker.RunWorkerAsync();
             }
-            foreach (DataRow dr in Results.Rows)
+            else
             {
-                DataGridView1.Rows.Add(dr.ItemArray);
+                Button1.Enabled = true;
             }
-            Cursor = Cursors.Default;
-            ProgBar.Invoke(new Action(() => ProgBar.Visible = false));
-            Button1.Enabled = true;
         }
 
         private void StartSearch()
@@ -3173,18 +3196,6 @@ namespace Eligor
             if (Halt == 0)
             {
                 WriteOut();
-            }
-            if (Seedtick % Progval == 0)
-            {
-                ProgBar.Invoke(new Action(() =>
-                {
-                    ProgBar.SeedCount.Text = $"{Seedtick:X8}";
-                    if (ResCount > Convert.ToUInt32(ProgBar.ResultsCount.Text))
-                    {
-                        ProgBar.ResultsCount.Text = $"{ResCount}";
-                    }
-                    ProgBar.ProgressBar1.Value = (int)Math.Max(0, Math.Min(2147483647, (Seedtick - Startseed) / 2));
-                }));
             }
         }
 
@@ -3290,7 +3301,7 @@ namespace Eligor
 
         private void EnableLimit_CheckStateChanged(object sender, EventArgs e)
         {
-            ResultsLimit.Enabled = EnableLimit.Checked;
+            SeedLimit.Enabled = EnableLimit.Checked;
         }
 
         private void PT_Click(object sender, EventArgs e)
@@ -3421,10 +3432,9 @@ namespace Eligor
             }
         }
 
-        private void BackgroundWorker1_DoWork_1(object sender, DoWorkEventArgs e)
+        private void ProgressWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             ProgBar.ShowDialog();
-            ProgBar.Visible = false;
         }
 
         private void TID_ValueChanged(object sender, EventArgs e)
@@ -3440,6 +3450,117 @@ namespace Eligor
         private void EPSV_Label_CheckStateChanged(object sender, EventArgs e)
         {
             EPSV_Val.Enabled = EPSV_Label.Checked;
+        }
+
+        private void UpdateProg()
+        {
+            ProgBar.Invoke(new Action(() =>
+            {
+                ProgBar.SeedCount.Text = $"{Seedtick:X8}";
+                ProgBar.ResultsCount.Text = $"{ResCount}";
+                ProgBar.ProgressBar1.Value = (int)Math.Max(0, Math.Min(2147483647, (Seedtick - Startseed) / 2));
+            }));
+        }
+
+        private void ProgTick(Object myObject, EventArgs myEventArgs)
+        {
+            UpdateProg();
+        }
+
+        private void SpreadWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            System.Timers.Timer Progtimer = new System.Timers.Timer { Interval = 1000 };
+            Progtimer.Elapsed += new System.Timers.ElapsedEventHandler(ProgTick);
+            Progtimer.Start();
+            while (Seedtick != Maxseed && Halt != 5)
+            {
+                if (ProgBar.Cancel.Enabled == true)
+                {
+                    StartSearch();
+                }
+                else
+                {
+                    Halt = 5;
+                }
+                Seedtick++;
+            }
+            Progtimer.Stop();
+            if (Halt != 5)
+            {
+                StartSearch();
+            }
+            UpdateProg();
+        }
+
+        private void SpreadWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            Cursor = Cursors.WaitCursor;
+            ProgBar.Invoke(new Action(() =>
+            {
+                ProgBar.Visible = false;
+                ProgBar.ProgReady = false;
+            }));
+            ResultsGrid.Columns.Clear();
+            if (Results.Rows.Count > 0)
+            {
+                ResultsGrid.DataSource = Results;
+                SaveResults.Enabled = true;
+            }
+            Cursor = Cursors.Default;
+            Button1.Enabled = true;
+        }
+
+        private void LimitResults_CheckStateChanged(object sender, EventArgs e)
+        {
+            ResultLimit.Enabled = LimitResults.Checked;
+        }
+
+        private string DumpResults()
+        {
+            StringBuilder dump = new StringBuilder();
+            for (int i = 0; i < Results.Columns.Count; i++)
+            {
+                dump.Append(Results.Columns[i]);
+                if (i < Results.Columns.Count - 1)
+                {
+                    dump.Append(",");
+                }
+                else
+                {
+                    dump.Append("\r\n");
+                }
+            }
+            foreach (DataRow dr in Results.Rows)
+            {
+                for (int i = 0; i < Results.Columns.Count; i++)
+                {
+                    dump.Append(dr[i].ToString());
+
+                    if (i < Results.Columns.Count - 1)
+                    {
+                        dump.Append(",");
+                    }
+                    else
+                    {
+                        dump.Append("\r\n");
+                    }
+                }
+            }
+            return dump.ToString();
+        }
+
+        private void SaveResults_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog svf = new SaveFileDialog();
+            svf.Filter = "Saves As (*.csv;*.txt)|*.csv;*.txt";
+            svf.FileName = $"Results({Pokemon[0]}) {DateTime.Now.ToString("yyyyMMddhhmmss")}";
+            if (svf.ShowDialog() == DialogResult.OK)
+            {
+                using (Output = new StreamWriter(svf.FileName))
+                {
+                    Output.WriteLine(DumpResults());
+                }
+            }
         }
     }
 }

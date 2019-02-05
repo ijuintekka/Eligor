@@ -117,6 +117,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Eligor";
             this.TopMost = true;
+            this.Shown += new System.EventHandler(this.Progress_Shown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
