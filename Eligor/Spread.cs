@@ -171,8 +171,7 @@ namespace Eligor
             }
             if (RunSilent == false)
             {
-                Results.Rows.Add(Line.ToArray());
-                if (Limit > 0 && ResCount > Limit)
+                if (Limit > 0 && ResCount == Limit)
                 {
                     Results.Rows.Add(ReRollTSV = $"Too many results to display. Display terminated at seed: {Seedtick:X8}");
                     if (OutputCSV == false)
@@ -185,6 +184,10 @@ namespace Eligor
                         RunSilent = true;
                         Results.Rows.Add("See CSV for further output.");
                     }
+                }
+                else
+                {
+                    Results.Rows.Add(Line.ToArray());
                 }
             }
             if (OutputCSV == true)
