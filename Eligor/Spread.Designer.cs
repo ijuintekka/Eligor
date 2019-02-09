@@ -1094,7 +1094,7 @@
             this.VersionLabel.Name = "VersionLabel";
             this.VersionLabel.Size = new System.Drawing.Size(69, 13);
             this.VersionLabel.TabIndex = 112;
-            this.VersionLabel.Text = "Version 1.10.";
+            this.VersionLabel.Text = "Version 1.11.";
             this.VersionLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // SpreadWorker

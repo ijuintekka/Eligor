@@ -16,6 +16,7 @@ namespace Eligor
         DataTable Results = new DataTable();
         Progress ProgBar = new Progress();
         StreamWriter Output;
+        List<string> Line;
         string[] CharacteristicText = { "Loves to eat", "Takes plenty of siestas", "Nods off a lot", "Scatters things often", "Likes to relax", "Proud of its power", "Likes to thrash about", "A little quick tempered", "Likes to fight", "Quick tempered", "Sturdy body", "Capable of taking hits", "Highly persistent", "Good endurance", "Good perseverance", "Likes to run", "Alert to sounds", "Impetuous and silly", "Somewhat of a clown", "Quick to flee", "Highly curious", "Mischievous", "Thoroughly cunning", "Often lost in thought", "Very finicky", "Strong willed", "Somewhat vain", "Strongly defiant", "Hates to lose", "Somewhat stubborn" };
         string[] NatureText = { "Hardy", "Lonely", "Brave", "Adamant", "Naughty", "Bold", "Docile", "Relaxed", "Impish", "Lax", "Timid", "Hasty", "Serious", "Jolly", "Naive", "Modest", "Mild", "Quiet", "Bashful", "Rash", "Calm", "Gentle", "Sassy", "Careful", "Quirky" };
         string[] HiddenPowerText = { "Fighting", "Flying", "Poison", "Ground", "Rock", "Bug", "Ghost", "Steel", "Fire", "Water", "Grass", "Electric", "Psychic", "Ice", "Dragon", "Dark" };
@@ -76,6 +77,7 @@ namespace Eligor
         uint EnemyTSV;
         decimal ResCount;
         decimal Limit;
+        bool Terminate;
 
         private uint RNGAdv(uint tseed, uint frame)
         {
@@ -97,7 +99,7 @@ namespace Eligor
 
         private void WriteOut()
         {
-            List<string> Line = new List<string> { $"{Seedtick:X8}" };
+            Line = new List<string> { $"{Seedtick:X8}" };
             if (IsStarter == true)
             {
                 Line.Add($"{EeveeTID}");
@@ -177,7 +179,7 @@ namespace Eligor
                     if (OutputCSV == false)
                     {
                         MessageBox.Show(ReRollTSV, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        Halt = 5;
+                        Terminate = true;
                     }
                     else
                     {
@@ -188,13 +190,6 @@ namespace Eligor
                 else
                 {
                     Results.Rows.Add(Line.ToArray());
-                }
-            }
-            if (OutputCSV == true)
-            {
-                using (Output = new StreamWriter(OutputFile, append: true))
-                {
-                    Output.WriteLine(string.Join(",", Line.ToArray()));
                 }
             }
             ResCount++;
@@ -2889,50 +2884,15 @@ namespace Eligor
 
         private void Button1_Click(object sender, EventArgs e)
         {
+            Terminate = LeadShadow = IsStarter = Button1.Enabled = SaveResults.Enabled = false;
+            ResCount = Halt = 0;
+            MustBeShiny = ShinyOnly.Checked;
+            Seedtick = Startseed;
             Pokemon[0] = (string)Pokemon_List.Rows[SelectedPokemon = ComboBox1.SelectedIndex]["Pokemon"];
-            if (LimitResults.Checked == true)
-            {
-                Limit = ResultLimit.Value;
-            }
-            else
-            {
-                Limit = 0;
-            }
-            if (EPSV_Label.Checked == true)
-            {
-                EPSV[0] = 1; EPSV[1] = EPSV_Val.Value;
-            }
-            else
-            {
-                EPSV[0] = 0;
-            }
-            LeadShadow = IsStarter = Button1.Enabled = SaveResults.Enabled = false;
-            if (Silent.Checked == false)
-            {
-                RunSilent = false;
-            }
-            else
-            {
-                RunSilent = true;
-            }
-            if (CSV.Checked == false)
-            {
-                OutputCSV = false;
-            }
-            else
-            {
-                OutputCSV = true;
-            }
             GenderThreshold[0] = (uint)Pokemon_List.Rows[SelectedPokemon]["Gender_Threshold"];
+            PokemonGenderTarget = $"{SelectGender.SelectedItem}";
             HasLock = (uint)Pokemon_List.Rows[SelectedPokemon]["Lock"];
             AllowShiny = (uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"];
-            for (uint i = 1; i <= HasLock; i++)
-            {
-                Pokemon[i] = (string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Species"];
-                Gender[i] = (string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender"];
-                Nature[i] = (uint)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Nature"];
-                GenderThreshold[i] = (uint)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender_Threshold"];
-            }
             MAX_HP_IV = (uint)HP_Max.Value;
             MAX_Attack_IV = (uint)ATK_Max.Value;
             MAX_Defense_IV = (uint)DEF_Max.Value;
@@ -2949,7 +2909,45 @@ namespace Eligor
             MIN_IV_Sum = (uint)SUM_Min.Value;
             MAX_HiddenPowerStrength = (uint)HID_Max.Value;
             MIN_HiddenPowerStrength = (uint)HID_Min.Value;
-            PokemonGenderTarget = $"{SelectGender.SelectedItem}";
+            if (LimitResults.Checked == true)
+            {
+                Limit = ResultLimit.Value;
+            }
+            else
+            {
+                Limit = 0;
+            }
+            if (EPSV_Label.Checked == true)
+            {
+                EPSV[0] = 1; EPSV[1] = EPSV_Val.Value;
+            }
+            else
+            {
+                EPSV[0] = 0;
+            }
+            if (Silent.Checked == false)
+            {
+                RunSilent = false;
+            }
+            else
+            {
+                RunSilent = true;
+            }
+            if (CSV.Checked == false)
+            {
+                OutputCSV = false;
+            }
+            else
+            {
+                OutputCSV = true;
+            }
+            for (uint i = 1; i <= HasLock; i++)
+            {
+                Pokemon[i] = (string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Species"];
+                Gender[i] = (string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender"];
+                Nature[i] = (uint)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Nature"];
+                GenderThreshold[i] = (uint)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender_Threshold"];
+            }
             for (int i = 0; i < Selected_Nature.Length; i++)
             {
                 if (NatureComboBox.GetItemCheckState(i) == CheckState.Checked)
@@ -3076,7 +3074,6 @@ namespace Eligor
             {
                 StarterTID[0] = 0;
             }
-            MustBeShiny = ShinyOnly.Checked;
             switch (Pokemon[0])
             {
                 case string p when p == "Eevee (XD)" || p == "Espeon (Colosseum)" || p == "Umbreon (Colosseum)": IsStarter = true; break;
@@ -3133,8 +3130,6 @@ namespace Eligor
                 ResultsGrid.Columns.Add("", "");
                 ResultsGrid.Rows.Add("Running silently. Check CSV for output...");
             }
-            Seedtick = Startseed;
-            ResCount = Halt = 0;
             if (OutputCSV == true)
             {
                 SaveFileDialog svf = new SaveFileDialog();
@@ -3158,10 +3153,10 @@ namespace Eligor
                 }
                 else
                 {
-                    Halt = 5;
+                    Terminate = true;
                 }
             }
-            if (Halt == 0)
+            if (Terminate == false)
             {
                 ProgressWorker.RunWorkerAsync(); 
                 while (ProgBar.ProgReady == false){}
@@ -3185,21 +3180,33 @@ namespace Eligor
 
         private void StartSearch()
         {
-            Halt = 0;
-            ReRollTSV = "None";
-            if (TSID[0] == 1)
+            if (ProgBar.Cancel.Enabled == true)
             {
-                TrainerShinyValue = (uint)TSID[1];
+                Halt = 0;
+                ReRollTSV = "None";
+                if (TSID[0] == 1)
+                {
+                    TrainerShinyValue = (uint)TSID[1];
+                }
+                else
+                {
+                    TrainerShinyValue = 9001;
+                }
+                SpreadFinder();
+                if (Halt == 0)
+                {
+                    WriteOut();
+                }
+                if (Seedtick == Maxseed)
+                {
+                    Terminate = true;
+                }
             }
             else
             {
-                TrainerShinyValue = 9001;
+                Terminate = true;
             }
-            SpreadFinder();
-            if (Halt == 0)
-            {
-                WriteOut();
-            }
+            Seedtick++;
         }
 
         private void SetTID()
@@ -3475,23 +3482,28 @@ namespace Eligor
             System.Timers.Timer Progtimer = new System.Timers.Timer { Interval = 1000 };
             Progtimer.Elapsed += new System.Timers.ElapsedEventHandler(ProgTick);
             Progtimer.Start();
-            while (Seedtick != Maxseed && Halt != 5)
+            if (OutputCSV == true)
             {
-                if (ProgBar.Cancel.Enabled == true)
+                using (Output = new StreamWriter(OutputFile, append: true))
+                {
+                    while (Terminate == false)
+                    {
+                        StartSearch();
+                        if (Halt == 0)
+                        {
+                            Output.WriteLine(string.Join(",", Line.ToArray()));
+                        }
+                    }
+                }
+            }
+            else
+            {
+                while (Terminate == false)
                 {
                     StartSearch();
                 }
-                else
-                {
-                    Halt = 5;
-                }
-                Seedtick++;
             }
             Progtimer.Stop();
-            if (Halt != 5)
-            {
-                StartSearch();
-            }
             UpdateProg();
         }
 
