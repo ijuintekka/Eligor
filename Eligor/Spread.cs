@@ -17,80 +17,88 @@ namespace Eligor
         Progress ProgBar = new Progress();
         StreamWriter Output;
         List<string> Line;
+
         string[] CharacteristicText = { "Loves to eat", "Takes plenty of siestas", "Nods off a lot", "Scatters things often", "Likes to relax", "Proud of its power", "Likes to thrash about", "A little quick tempered", "Likes to fight", "Quick tempered", "Sturdy body", "Capable of taking hits", "Highly persistent", "Good endurance", "Good perseverance", "Likes to run", "Alert to sounds", "Impetuous and silly", "Somewhat of a clown", "Quick to flee", "Highly curious", "Mischievous", "Thoroughly cunning", "Often lost in thought", "Very finicky", "Strong willed", "Somewhat vain", "Strongly defiant", "Hates to lose", "Somewhat stubborn" };
         string[] NatureText = { "Hardy", "Lonely", "Brave", "Adamant", "Naughty", "Bold", "Docile", "Relaxed", "Impish", "Lax", "Timid", "Hasty", "Serious", "Jolly", "Naive", "Modest", "Mild", "Quiet", "Bashful", "Rash", "Calm", "Gentle", "Sassy", "Careful", "Quirky" };
         string[] HiddenPowerText = { "Fighting", "Flying", "Poison", "Ground", "Rock", "Bug", "Ghost", "Steel", "Fire", "Water", "Grass", "Electric", "Psychic", "Ice", "Dragon", "Dark" };
-        uint Halt;
-        uint PokemonSeed;
+        string[] Pokemon = { "", "", "", "", "", "" };
+        
+        string OutputFile;
+
+        bool Halt;
+        bool LeadShadow;
+        bool Terminate;
+        bool RunSilent;
+        bool OutputCSV;
+        bool AllowShiny;
+        bool MustBeShiny;
+        bool IsStarter;
+
         uint[] PID = { 0, 0, 0, 0, 0, 0 };
-        uint Characteristic;
+        uint[] Nature = { 0, 0, 0, 0, 0, 0 };
+        uint[] PokemonShinyValue = { 0, 0, 0, 0, 0, 0 };
+
         uint Seedtick;
         uint Startseed;
         uint Maxseed;
         uint Tempseed;
+        uint PokemonSeed;
+        uint EnemyTSV;
+        uint EeveeTID;
+        uint EeveeSID;
+        uint ReRollTSV;
+        uint TrainerShinyValue;
+
+        int[] Gender = { 0, 0, 0, 0, 0, 0 };
+        int[] GenderThreshold = { 0, 0, 0, 0, 0, 0 };
         int[] IVs = { 31, 31, 31, 31, 31, 31 };
-        uint MAX_HP_IV;
-        uint MAX_Attack_IV;
-        uint MAX_Defense_IV;
-        uint MAX_Special_Attack_IV;
-        uint MAX_Special_Defense_IV;
-        uint MAX_Speed_IV;
-        uint MIN_HP_IV;
-        uint MIN_Attack_IV;
-        uint MIN_Defense_IV;
-        uint MIN_Special_Attack_IV;
-        uint MIN_Special_Defense_IV;
-        uint MIN_Speed_IV;
-        uint MAX_IV_Sum;
-        uint MIN_IV_Sum;
-        string PokemonGenderTarget;
+        int[] IsReRoll = { 0, 0, 0, 0, 0, 0 };
         int[] Selected_HiddenPowerType = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
         int[] Selected_Characteristic = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
         int[] Selected_Nature = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-        uint HiddenPowerType;
-        uint HiddenPowerStrength;
-        uint MAX_HiddenPowerStrength;
-        uint MIN_HiddenPowerStrength;
-        uint HasLock;
-        uint[] Nature = { 0, 0, 0, 0, 0, 0 };
-        string[] Gender = { "", "", "", "", "", "" };
-        uint[] GenderThreshold = { 0, 0, 0, 0, 0, 0 };
-        uint[] PokemonShinyValue = { 0, 0, 0, 0, 0, 0 };
-        uint[] IsReRoll = { 0, 0, 0, 0, 0, 0 };
-        uint TrainerShinyValue;
-        int[] TSID = { 0, 0 };
-        uint AllowShiny;
-        bool MustBeShiny;
-        bool IsStarter;
-        uint[] StarterTID = {0, 0};
-        int SelectedPokemon;
-        uint ForceShiny;
-        uint EeveeTID;
-        uint EeveeSID;
-        string ReRollTSV;
-        bool RunSilent;
-        bool OutputCSV;
-        string OutputFile;
-        bool LeadShadow;
-        string[] Pokemon = { "", "", "", "", "", "" };
-        decimal[] EPSV = { 0, 0 };
-        uint EnemyTSV;
-        decimal ResCount;
-        decimal Limit;
-        bool Terminate;
 
-        private uint RNGAdv(uint tseed, uint frame)
+        int PokemonGenderTarget;
+        int EPSV;
+        int TSID;
+        int StarterTID;
+        int MAX_HP_IV;
+        int MAX_Attack_IV;
+        int MAX_Defense_IV;
+        int MAX_Special_Attack_IV;
+        int MAX_Special_Defense_IV;
+        int MAX_Speed_IV;
+        int MIN_HP_IV;
+        int MIN_Attack_IV;
+        int MIN_Defense_IV;
+        int MIN_Special_Attack_IV;
+        int MIN_Special_Defense_IV;
+        int MIN_Speed_IV;
+        int MAX_IV_Sum;
+        int MIN_IV_Sum;
+        int SelectedPokemon;
+        int Characteristic;
+        int ForceShiny;
+        int HiddenPowerType;
+        int HiddenPowerStrength;
+        int MAX_HiddenPowerStrength;
+        int MIN_HiddenPowerStrength;
+        int HasLock;
+
+        long ResCount;
+        long Limit;
+
+        private uint RNGAdv(uint tseed, int frame)
         {
-            for (uint i = 0; i < frame; i++)
+            for (int i = 0; i < frame; i++)
             {
                 tseed = (tseed * 0x000343fd) + 0x00269ec3;
             }
             return tseed;
         }
 
-        private uint RNGRev(uint tseed, uint frame)
+        private uint RNGRev(uint tseed, int frame)
         {
-            for (uint i = 0; i < frame; i++)
+            for (int i = 0; i < frame; i++)
             {
                 tseed = (tseed * 0xb9b33155) + 0xa170f641;
             }
@@ -114,17 +122,29 @@ namespace Eligor
             {
                 Line.Add($"{PID[0]:X8}");
             }
-            if (ForceShiny > 0 && AllowShiny == 1 && HasLock > 0)
+            if (ForceShiny > 0 && AllowShiny == true && HasLock > 0)
             {
                 Line.Add($"{EnemyTSV}");
             }
-            if (AllowShiny == 1 && ReRollTSV == "None")
+            if (AllowShiny == true && ReRollTSV == 9003)
             {
-                ReRollTSV = $"{GetSV(PID[0])}";
+                ReRollTSV = GetSV(PID[0]);
             }
-            Line.Add(ReRollTSV);
+            if (ReRollTSV == 9003)
+            {
+                Line.Add("None");
+            }
+            else
+            {
+                Line.Add($"{ReRollTSV}");
+            }
             Line.Add(NatureText[Nature[0]]);
-            Line.Add(Gender[0]);
+            switch (Gender[0])
+            {
+                case 0: Line.Add("Genderless"); break;
+                case 1: Line.Add("Male"); break;
+                case 2: Line.Add("Female"); break;
+            }
             Line.Add($"{IVs[0]}");
             Line.Add($"{IVs[1]}");
             Line.Add($"{IVs[2]}");
@@ -135,7 +155,7 @@ namespace Eligor
             Line.Add(CharacteristicText[Characteristic]);
             if (HasLock > 0)
             {
-                for (uint i = 1; i <= HasLock; i++)
+                for (int i = 1; i <= HasLock; i++)
                 {
                     if (Nature[i] == 26)
                     {
@@ -150,11 +170,11 @@ namespace Eligor
                         Line.Add($"{Pokemon[i]}:{PID[i]:X8}");
                     }
                 }
-                if (LeadShadow == false && !(AllowShiny == 1 && ForceShiny > 0))
+                if (LeadShadow == false && !(AllowShiny == true && ForceShiny > 0))
                 {
                     Tempseed = RNGAdv(Seedtick, 2);
                     List<string> Safety = new List<string> {};
-                    uint i = 0;
+                    int i = 0;
                     while (!(Gender[1] == GetGender(PID[1] = GetPID(Tempseed), GenderThreshold[1]) && (Nature[1] > 24 || Nature[1] == GetNature(PID[1]))))
                     {
                         i++;
@@ -175,10 +195,11 @@ namespace Eligor
             {
                 if (Limit > 0 && ResCount == Limit)
                 {
-                    Results.Rows.Add(ReRollTSV = $"Too many results to display. Display terminated at seed: {Seedtick:X8}");
+                    string s = $"Too many results to display. Display terminated at seed: {Seedtick:X8}";
+                    Results.Rows.Add(s);
                     if (OutputCSV == false)
                     {
-                        MessageBox.Show(ReRollTSV, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show(s, "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         Terminate = true;
                     }
                     else
@@ -207,12 +228,12 @@ namespace Eligor
 
         private void GetHiddenPowerType()
         {
-            HiddenPowerType = (uint)(((IVs[0] & 1) + ((IVs[1] & 1) << 1) + ((IVs[2] & 1) << 2) + ((IVs[3] & 1) << 3) + ((IVs[4] & 1) << 4) + ((IVs[5] & 1) << 5)) * 15) / 63;
+            HiddenPowerType = (((IVs[0] & 1) + ((IVs[1] & 1) << 1) + ((IVs[2] & 1) << 2) + ((IVs[3] & 1) << 3) + ((IVs[4] & 1) << 4) + ((IVs[5] & 1) << 5)) * 15) / 63;
         }
 
         private void GetHiddenPowerStrength()
         {
-            HiddenPowerStrength = (uint)(((((IVs[0] >> 1) & 1) + (((IVs[1] >> 1) & 1) << 1) + (((IVs[2] >> 1) & 1) << 2) + (((IVs[3] >> 1) & 1) << 3) + (((IVs[4] >> 1) & 1) << 4) + (((IVs[5] >> 1) & 1) << 5)) * 40) / 63) + 30;
+            HiddenPowerStrength = (((((IVs[0] >> 1) & 1) + (((IVs[1] >> 1) & 1) << 1) + (((IVs[2] >> 1) & 1) << 2) + (((IVs[3] >> 1) & 1) << 3) + (((IVs[4] >> 1) & 1) << 4) + (((IVs[5] >> 1) & 1) << 5)) * 40) / 63) + 30;
         }
 
         private uint GetPID(uint call)
@@ -222,31 +243,31 @@ namespace Eligor
 
         private void GetCharacteristic(uint call)
         {
-            uint charaslot = call % 6;
-            uint tiebreaker = 0;
-            for (uint i = 0; i < 6; i++)
+            int charaslot = (int)(call % 6);
+            int tiebreaker = 0;
+            for (int i = 0; i < 6; i++)
             {
                 if (IVs[tiebreaker = charaslot++ % 6] == IVs.Max())
                 {
                     break;
                 }
             }
-            Characteristic = tiebreaker * 5 + (uint)IVs.Max() % 5;
+            Characteristic = tiebreaker * 5 + IVs.Max() % 5;
         }
 
-        private string GetGender(uint call, uint threshold)
+        private int GetGender(uint call, int threshold)
         {
             if (threshold > 255)
             {
-                return "Genderless";
+                return 0; //Genderless
             }
             else if ((call & 255) >= threshold)
             {
-                return "Male";
+                return 1; //Male
             }
             else
             {
-                return "Female";
+                return 2; //Female
             }
         }
 
@@ -264,11 +285,11 @@ namespace Eligor
         {
             if (Nature[1] > 24 || (Gender[1] == GetGender(PID[1] = GetPID(Tempseed), GenderThreshold[1]) && Nature[1] == GetNature(PID[1])))
             {
-                for (uint i = 1; i <= HasLock; i++)
+                for (int i = 1; i <= HasLock; i++)
                 {
                     if (LeadShadow == true && i == 2 && (Gender[2] != GetGender(PID[2] = GetPID(Tempseed), GenderThreshold[2]) || Nature[2] != GetNature(PID[2])))
                     {
-                        Halt = 1;
+                        Halt = true;
                         break;
                     }
                     if (Nature[i] == 26)
@@ -282,28 +303,28 @@ namespace Eligor
                         PokemonShinyValue[i] = GetSV(PID[i]);
                         if (PokemonShinyValue[i] == TrainerShinyValue)
                         {
-                            ReRollTSV = $"{TrainerShinyValue}";
+                            ReRollTSV = TrainerShinyValue;
                         }
                         if (i > 1)
                         {
-                            while (Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || (AllowShiny == 0 && PokemonShinyValue[i] == TrainerShinyValue))
+                            while (Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || (AllowShiny == false && PokemonShinyValue[i] == TrainerShinyValue))
                             {
                                 Tempseed = RNGAdv(Tempseed, 2);
                                 PID[i] = GetPID(Tempseed);
                                 PokemonShinyValue[i] = GetSV(PID[i]);
                                 if (PokemonShinyValue[i] == TrainerShinyValue && (Nature[i] == GetNature(PID[i])) && (Gender[i] == GetGender(PID[i], GenderThreshold[i])))
                                 {
-                                    ReRollTSV = $"{TrainerShinyValue}";
+                                    ReRollTSV = TrainerShinyValue;
                                 }
                             }
                             if (ForceShiny == i)
                             {
                                 TrainerShinyValue = PokemonShinyValue[i];
-                                for (uint s = 1; s < i; s++)
+                                for (int s = 1; s < i; s++)
                                 {
                                     if (PokemonShinyValue[s] == TrainerShinyValue)
                                     {
-                                        Halt = 1;
+                                        Halt = true;
                                         break;
                                     }
                                 }
@@ -315,10 +336,10 @@ namespace Eligor
                         }
                         if (PokemonShinyValue[i] == TrainerShinyValue)
                         {
-                            ReRollTSV = $"{TrainerShinyValue}";
+                            ReRollTSV = TrainerShinyValue;
                         }
                         IsReRoll[i] = 0;
-                        while ((Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || (AllowShiny == 0 && PokemonShinyValue[i] == TrainerShinyValue)) && Halt == 0)
+                        while ((Nature[i] < 25 && ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i]))) || (AllowShiny == false && PokemonShinyValue[i] == TrainerShinyValue)) && Halt == false)
                         {
                             Tempseed = RNGAdv(Tempseed, 2);
                             PID[i] = GetPID(Tempseed);
@@ -326,10 +347,10 @@ namespace Eligor
                             IsReRoll[i]++;
                             if (PokemonShinyValue[i] == TrainerShinyValue && (Nature[i] == GetNature(PID[i])) && (Gender[i] == GetGender(PID[i], GenderThreshold[i])))
                             {
-                                ReRollTSV = $"{TrainerShinyValue}";
+                                ReRollTSV = TrainerShinyValue;
                             }
                         }
-                        if (Halt == 0)
+                        if (Halt == false)
                         {
                             Tempseed = RNGAdv(Tempseed, 7);
                         }
@@ -338,13 +359,13 @@ namespace Eligor
             }
             else
             {
-                Halt = 1;
+                Halt = true;
             }
         }
 
         private void SolveForceColoLock()
         {
-            for (uint i = 1; i <= HasLock; i++)
+            for (int i = 1; i <= HasLock; i++)
             {
                 PID[i] = GetPID(Tempseed);
                 PokemonShinyValue[i] = GetSV(PID[i]);
@@ -354,14 +375,14 @@ namespace Eligor
                     PID[i] = GetPID(Tempseed);
                     PokemonShinyValue[i] = GetSV(PID[i]);
                 }
+                IsReRoll[i] = 0;
                 if (ForceShiny == i && PokemonShinyValue[i] != EnemyTSV)
                 {
-                    Halt = 1;
+                    Halt = true;
                     break;
                 }
                 else
                 {
-                    IsReRoll[i] = 0;
                     while ((Gender[i] != GetGender(PID[i], GenderThreshold[i])) || (Nature[i] != GetNature(PID[i])) || (PokemonShinyValue[i] == EnemyTSV))
                     {
                         Tempseed = RNGAdv(Tempseed, 2);
@@ -370,6 +391,11 @@ namespace Eligor
                         IsReRoll[i]++;
                     }
                     Tempseed = RNGAdv(Tempseed, 7);
+                }
+                if (i == HasLock && ForceShiny == 6 && Array.Find(IsReRoll, v => v > 0) == 0)
+                {
+                    Halt = true;
+                    break;
                 }
             }
         }
@@ -380,7 +406,7 @@ namespace Eligor
             Tempseed = RNGAdv(Tempseed, 2);
             if (HasLock > 0)
             {
-                if (AllowShiny > 0 && ForceShiny > 0)
+                if (AllowShiny == true && ForceShiny > 0)
                 {
                     SolveForceColoLock();
                 }
@@ -392,15 +418,15 @@ namespace Eligor
             else if (IsStarter == true)
             {
                 TrainerShinyValue = EnemyTSV;
-                if (StarterTID[0] == 1 && StarterTID[1] != EeveeTID)
+                if (StarterTID >= 0 && StarterTID != EeveeTID)
                 {
-                    Halt = 1;
+                    Halt = true;
                 }
                 else if (Pokemon[0] == "Espeon (Colosseum)")
                 {
                     PID[0] = GetPID(Tempseed);
                     PokemonShinyValue[0] = GetSV(PID[0]);
-                    while ((PokemonShinyValue[0] == TrainerShinyValue) || (GetGender(PID[0], 31) == "Female"))
+                    while ((PokemonShinyValue[0] == TrainerShinyValue) || (GetGender(PID[0], 31) == 2))
                     {
                         Tempseed = RNGAdv(Tempseed, 2);
                         PID[0] = GetPID(Tempseed);
@@ -409,7 +435,7 @@ namespace Eligor
                     Tempseed = RNGAdv(Tempseed, 7);
                 }
             }
-            if (Halt == 0)
+            if (Halt == false)
             {
                 GetIVs(Tempseed);
                 if ( // Begin Failure Conditions
@@ -429,7 +455,7 @@ namespace Eligor
                     IVs.Sum() < MIN_IV_Sum
                 ) // End Failure Conditions
                 {
-                    Halt = 1;
+                    Halt = true;
                 }
                 else
                 {
@@ -438,7 +464,7 @@ namespace Eligor
                     Selected_HiddenPowerType[HiddenPowerType] == 0
                     ) // End Failure Conditions
                     {
-                        Halt = 1;
+                        Halt = true;
                     }
                     else
                     {
@@ -448,54 +474,54 @@ namespace Eligor
                         HiddenPowerStrength > MAX_HiddenPowerStrength
                         ) // End Failure Conditions
                         {
-                            Halt = 1;
+                            Halt = true;
                         }
                         else
                         {
                             PokemonSeed = Tempseed;
                             PID[0] = GetPID(Tempseed);
                             PokemonShinyValue[0] = GetSV(PID[0]);
-                            if (ForceShiny == 6 && AllowShiny == 0)
+                            if (ForceShiny == 6 && AllowShiny == false)
                             {
                                 TrainerShinyValue = PokemonShinyValue[0];
                             }
                             if (IsStarter == false && PokemonShinyValue[0] == TrainerShinyValue)
                             {
-                                ReRollTSV = $"{TrainerShinyValue}";
+                                ReRollTSV = TrainerShinyValue;
                             }
                             IsReRoll[0] = 0;
-                            while ((AllowShiny == 0 && PokemonShinyValue[0] == TrainerShinyValue) || (IsStarter == true && AllowShiny == 0 && GetGender(PID[0], 31) == "Female"))
+                            while ((AllowShiny == false && PokemonShinyValue[0] == TrainerShinyValue) || (IsStarter == true && AllowShiny == false && GetGender(PID[0], 31) == 2))
                             {
                                 Tempseed = RNGAdv(Tempseed, 2);
                                 PID[0] = GetPID(Tempseed);
                                 PokemonShinyValue[0] = GetSV(PID[0]);
                                 IsReRoll[0]++;
                             }
-                            if ((MustBeShiny == true && PokemonShinyValue[0] != TrainerShinyValue) || (EPSV[0] == 1 && EPSV[1] != PokemonShinyValue[0]))
+                            if ((MustBeShiny == true && PokemonShinyValue[0] != TrainerShinyValue) || (EPSV >= 0 && EPSV != PokemonShinyValue[0]))
                             {
-                                Halt = 1;
+                                Halt = true;
                             }
                             else
                             {
-                                if (AllowShiny == 1 && PokemonShinyValue[0] == TrainerShinyValue)
+                                if (AllowShiny == true && PokemonShinyValue[0] == TrainerShinyValue)
                                 {
-                                    ReRollTSV = $"{TrainerShinyValue}";
+                                    ReRollTSV = TrainerShinyValue;
                                 }
                                 Nature[0] = GetNature(PID[0]);
                                 if ( // Begin Failure Conditions
                                 Selected_Nature[Nature[0]] == 0
                                 ) // End Failure Conditions
                                 {
-                                    Halt = 2;
+                                    Halt = true;
                                 }
                                 else
                                 {
                                     Gender[0] = GetGender(PID[0], GenderThreshold[0]);
                                     if ( // Begin Failure Conditions
-                                    Gender[0] != PokemonGenderTarget && PokemonGenderTarget != "Any"
+                                    Gender[0] != PokemonGenderTarget && PokemonGenderTarget != 0
                                     ) // End Failure Conditions
                                     {
-                                        Halt = 2;
+                                        Halt = true;
                                     }
                                     else
                                     {
@@ -504,7 +530,7 @@ namespace Eligor
                                         Selected_Characteristic[Characteristic] == 0
                                         ) // End Failure Conditions
                                         {
-                                            Halt = 2;
+                                            Halt = true;
                                         }
                                     }
                                 }
@@ -523,30 +549,30 @@ namespace Eligor
             HiddenPowerComboBox.Items.AddRange(HiddenPowerText);
             NatureComboBox.ContextMenu = CharacteristicComboBox.ContextMenu = HiddenPowerComboBox.ContextMenu = new ContextMenu();
             Pokemon_List.Columns.Add("Pokemon", typeof(string));
-            Pokemon_List.Columns.Add("Gender_Threshold", typeof(uint));
-            Pokemon_List.Columns.Add("Lock", typeof(uint));
-            Pokemon_List.Columns.Add("AllowShiny", typeof(uint));
+            Pokemon_List.Columns.Add("Gender_Threshold", typeof(int));
+            Pokemon_List.Columns.Add("Lock", typeof(int));
+            Pokemon_List.Columns.Add("AllowShiny", typeof(bool));
             Pokemon_List.Columns.Add("ShinyValue", typeof(int));
             Pokemon_List.Columns.Add("Shadow1_Species", typeof(string));
             Pokemon_List.Columns.Add("Shadow1_Gender", typeof(string));
             Pokemon_List.Columns.Add("Shadow1_Nature", typeof(uint));
-            Pokemon_List.Columns.Add("Shadow1_Gender_Threshold", typeof(uint));
+            Pokemon_List.Columns.Add("Shadow1_Gender_Threshold", typeof(int));
             Pokemon_List.Columns.Add("Shadow2_Species", typeof(string));
             Pokemon_List.Columns.Add("Shadow2_Gender", typeof(string));
             Pokemon_List.Columns.Add("Shadow2_Nature", typeof(uint));
-            Pokemon_List.Columns.Add("Shadow2_Gender_Threshold", typeof(uint));
+            Pokemon_List.Columns.Add("Shadow2_Gender_Threshold", typeof(int));
             Pokemon_List.Columns.Add("Shadow3_Species", typeof(string));
             Pokemon_List.Columns.Add("Shadow3_Gender", typeof(string));
             Pokemon_List.Columns.Add("Shadow3_Nature", typeof(uint));
-            Pokemon_List.Columns.Add("Shadow3_Gender_Threshold", typeof(uint));
+            Pokemon_List.Columns.Add("Shadow3_Gender_Threshold", typeof(int));
             Pokemon_List.Columns.Add("Shadow4_Species", typeof(string));
             Pokemon_List.Columns.Add("Shadow4_Gender", typeof(string));
             Pokemon_List.Columns.Add("Shadow4_Nature", typeof(uint));
-            Pokemon_List.Columns.Add("Shadow4_Gender_Threshold", typeof(uint));
+            Pokemon_List.Columns.Add("Shadow4_Gender_Threshold", typeof(int));
             Pokemon_List.Columns.Add("Shadow5_Species", typeof(string));
             Pokemon_List.Columns.Add("Shadow5_Gender", typeof(string));
             Pokemon_List.Columns.Add("Shadow5_Nature", typeof(uint));
-            Pokemon_List.Columns.Add("Shadow5_Gender_Threshold", typeof(uint));
+            Pokemon_List.Columns.Add("Shadow5_Gender_Threshold", typeof(int));
 
             //Gender Thresholds
             //Genderless or Lock-Shadow:    256+
@@ -561,19 +587,19 @@ namespace Eligor
             Pokemon_List.Rows.Add("Umbreon (Colosseum)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Espeon (Colosseum)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Makuhita (Colosseum)",
                 63, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Duskull", //Pokemon 1, Quirky, Male
@@ -585,139 +611,139 @@ namespace Eligor
             Pokemon_List.Rows.Add("Bayleef (Colosseum)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Quilava (Colosseum)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Croconaw (Colosseum)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Slugma (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Noctowl (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Flaaffy (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Skiploom (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Quagsire (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Misdreavus (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Furret (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Yanma (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Remoraid (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Mantine (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Qwilfish (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Meditite (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Dunsparce (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Swablu (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Sudowoodo (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Hitmontop (Colosseum)",
                 0, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Entei (Colosseum)",
                 256, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Ledian (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Suicune (Colosseum)",
                 256, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Gligar (Colosseum)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Teddiursa", //Pokemon 1, Serious, Male
@@ -732,31 +758,31 @@ namespace Eligor
             Pokemon_List.Rows.Add("Stantler (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Piloswine (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Sneasel (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Aipom (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Murkrow (Colosseum)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Carvahna", //Pokemon 1, Docile, Male
@@ -771,49 +797,49 @@ namespace Eligor
             Pokemon_List.Rows.Add("Forretress (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Ariados (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Granbull (Colosseum)",
                 191, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Vibrava (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Raikou (Colosseum)",
                 256, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Sunflora (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Delibird (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Heracross (Colosseum)",
             127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Masquerain", //Pokemon 1, Hardy, Male
@@ -825,55 +851,55 @@ namespace Eligor
             Pokemon_List.Rows.Add("Skarmory (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Miltank (Colosseum)",
                 255, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Absol (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Houndoom (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Tropius (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Metagross (Colosseum)",
                 256, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Tyranitar (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Smeargle (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Ursaring (Colosseum)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Machoke", //Pokemon 1, Calm, Female
@@ -888,37 +914,37 @@ namespace Eligor
             Pokemon_List.Rows.Add("Shuckle (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Togetic (Colosseum)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Plusle (Colosseum)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 4643); //Shiny Value
 
             Pokemon_List.Rows.Add("Ho-Oh (Colosseum)",
                 256, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 1256); //Shiny Value
 
             Pokemon_List.Rows.Add("Eevee (XD)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Ralts (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Kadabra", //Pokemon 1, Hardy, Male
@@ -933,13 +959,13 @@ namespace Eligor
             Pokemon_List.Rows.Add("Teddiursa (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Poochyena (XD)",
                 127, //Gender Threshold
                 1, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Zubat", //Pokemon 1, Serious, Female
@@ -948,7 +974,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Ledyba (XD)",
                 127, //Gender Threshold
                 1, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Taillow", //Pokemon 1, Hardy, Female
@@ -957,13 +983,13 @@ namespace Eligor
             Pokemon_List.Rows.Add("Houndour (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Spheal -Cipher Lab- (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Horsea", //Pokemon 1, Quirky, Male
@@ -975,7 +1001,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Spheal -Phenac City and Post- (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Horsea", //Pokemon 1, Quirky, Male
@@ -990,19 +1016,19 @@ namespace Eligor
             Pokemon_List.Rows.Add("Baltoy (XD)",
                 256, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Mareep (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Gulpin (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Koffing", //Pokemon 1, Hasty, Female
@@ -1014,7 +1040,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Seedot -Cipher Lab- (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Oddish", //Pokemon 1, Docile, Male
@@ -1035,7 +1061,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Seedot -Phenac City- (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Oddish", //Pokemon 1, Docile, Male
@@ -1056,7 +1082,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Seedot -Post- (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Vileplume", //Pokemon 1, Docile, Male
@@ -1077,7 +1103,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Spinarak (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Swinub", //Pokemon 1, Hasty, Female
@@ -1089,7 +1115,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Numel (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ralts", //Pokemon 1, Docile, Male
@@ -1104,13 +1130,13 @@ namespace Eligor
             Pokemon_List.Rows.Add("Carvanha (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Shroomish (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Snubbull", //Pokemon 1, Quirky, Female
@@ -1122,7 +1148,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Delcatty (XD)",
                 191, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Luvdisc", //Pokemon 1, Relaxed, Female
@@ -1137,7 +1163,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Voltorb (XD)",
                 256, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Lombre", //Pokemon 1, Hardy, Male
@@ -1152,7 +1178,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Makuhita (XD)",
                 63, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Kecleon", //Pokemon 1, Docile, Male
@@ -1164,7 +1190,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Vulpix (XD)",
                 191, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Spinarak", //Pokemon 1, Hardy, Male
@@ -1179,7 +1205,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Duskull (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Sneasel", //Pokemon 1, Serious, Male
@@ -1194,7 +1220,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Mawile (XD)",
                 63, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Loudred", //Pokemon 1, Docile, Male
@@ -1206,7 +1232,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Snorunt (XD)",
                 127, //Gender Threshold
                 1, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Seviper", //Pokemon 1, Docile, Female
@@ -1215,7 +1241,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Pineco (XD)",
                 127, //Gender Threshold
                 1, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Murkrow", //Pokemon 1, Docile, Male
@@ -1224,7 +1250,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Natu (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Kirlia", //Pokemon 1, Hardy, Male
@@ -1236,7 +1262,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Roselia (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Remoraid", //Pokemon 1, Docile, Male
@@ -1248,7 +1274,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Meowth (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Kadabra", //Pokemon 1, Docile, Male
@@ -1263,7 +1289,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Swinub (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Torkoal", //Pokemon 1, Bashful, Female
@@ -1275,7 +1301,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Spearow (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Pelipper", //Pokemon 1, Bashful, Male
@@ -1287,7 +1313,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Grimer (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Chimecho", //Pokemon 1, Serious, Male
@@ -1299,7 +1325,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Seel (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Hoothoot", //Pokemon 1, Docile, Male
@@ -1314,7 +1340,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Lunatone (XD)",
                 256, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Lanturn", //Pokemon 1, Hardy, Female
@@ -1326,13 +1352,13 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zangoose (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Nosepass (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Lombre", //Pokemon 1, Hardy, Male
@@ -1347,13 +1373,13 @@ namespace Eligor
             Pokemon_List.Rows.Add("Togepi (XD)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Paras (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Seviper", //Pokemon 1, Quirky, Male
@@ -1365,7 +1391,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Growlithe (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Seviper", //Pokemon 1, Quirky, Male
@@ -1380,7 +1406,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Growlithe -Paras Seen- (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Seviper", //Pokemon 1, Quirky, Male
@@ -1395,19 +1421,19 @@ namespace Eligor
             Pokemon_List.Rows.Add("Shellder (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Beedrill (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Pidgeotto (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Beedrill", //Pokemon 1, Shadow
@@ -1422,7 +1448,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Pidgeotto -Beedrill Seen- (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Beedrill", //Pokemon 1, Shadow -Seen-
@@ -1437,7 +1463,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Tangela (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninetales", //Pokemon 1, Serious, Female
@@ -1452,7 +1478,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Butterfree (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninetales", //Pokemon 1, Serious, Female
@@ -1470,7 +1496,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Butterfree -Tangela Seen- (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninetales", //Pokemon 1, Serious, Female
@@ -1488,7 +1514,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Magneton (XD)",
                 256, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shedinja", //Pokemon 1, Bashful, Genderless
@@ -1503,7 +1529,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Venomoth (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Golduck", //Pokemon 1, Bashful, Female
@@ -1518,7 +1544,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Weepinbell (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Golduck", //Pokemon 1, Bashful, Female
@@ -1536,7 +1562,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Weepinbell -Venomoth Seen- (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Golduck", //Pokemon 1, Bashful, Female
@@ -1554,7 +1580,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Arbok (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Huntail", //Pokemon 1, Docile, Male
@@ -1572,7 +1598,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Primeape (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Lairon", //Pokemon 1, Bashful, Female
@@ -1590,7 +1616,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Hypno (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Lairon", //Pokemon 1, Bashful, Female
@@ -1611,7 +1637,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Hypno -Primeape Seen- (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Lairon", //Pokemon 1, Bashful, Female
@@ -1632,7 +1658,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Golduck (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Crawdaunt", //Pokemon 1, Quirky, Male
@@ -1647,7 +1673,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Sableye (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Crawdaunt", //Pokemon 1, Quirky, Male
@@ -1665,7 +1691,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Sableye -Golduck Seen- (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Crawdaunt", //Pokemon 1, Quirky, Male
@@ -1683,7 +1709,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Dodrio (XD)",
                 127, //Gender Threshold
                 1, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Xatu", //Pokemon 1, Bashful, Female
@@ -1692,7 +1718,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Raticate (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Xatu", //Pokemon 1, Bashful, Female
@@ -1707,7 +1733,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Raticate -Dodrio Seen- (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Xatu", //Pokemon 1, Bashful, Female
@@ -1722,7 +1748,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Farfetch'd (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Gardevoir", //Pokemon 1, Serious, Male
@@ -1737,7 +1763,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Altaria (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Gardevoir", //Pokemon 1, Serious, Male
@@ -1755,7 +1781,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Altaria -Farfetch'd Seen- (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Gardevoir", //Pokemon 1, Serious, Male
@@ -1773,7 +1799,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Kangaskhan (XD)",
                 255, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Electrode", //Pokemon 1, Hardy, Genderless
@@ -1788,7 +1814,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Banette (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Electrode", //Pokemon 1, Hardy, Genderless
@@ -1806,7 +1832,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Banette -Kangaskhan Seen- (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Electrode", //Pokemon 1, Hardy, Genderless
@@ -1824,7 +1850,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Magmar (XD)",
                 63, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Houndoom", //Pokemon 1, Bashful, Male
@@ -1839,7 +1865,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Pinsir (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Houndoom", //Pokemon 1, Bashful, Male
@@ -1857,7 +1883,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Pinsir -Magmar Seen- (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Houndoom", //Pokemon 1, Bashful, Male
@@ -1875,7 +1901,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Rapidash (XD)",
                 127, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Camerupt", //Pokemon 1, Quirky, Male
@@ -1890,7 +1916,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Magcargo (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Camerupt", //Pokemon 1, Quirky, Male
@@ -1908,7 +1934,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Magcargo -Rapidash Seen- (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Camerupt", //Pokemon 1, Quirky, Male
@@ -1926,7 +1952,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Hitmonchan (XD)",
                 0, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Medicham", //Pokemon 1, Quirky, Male
@@ -1941,7 +1967,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Hitmonlee (XD)",
                 0, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Grumpig", //Pokemon 1, Bashful, Male
@@ -1959,7 +1985,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Lickitung (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Lanturn", //Pokemon 1, Quirky, Male
@@ -1971,7 +1997,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Scyther (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Stantler", //Pokemon 1, Docile, Female
@@ -1983,7 +2009,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Chansey (XD)",
                 255, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Stantler", //Pokemon 1, Docile, Female
@@ -1998,7 +2024,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Chansey -Scyther Seen- (XD)",
                 255, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Stantler", //Pokemon 1, Docile, Female
@@ -2013,7 +2039,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Solrock (XD)",
                 256, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Metang", //Pokemon 1, Quirky, Genderless
@@ -2028,7 +2054,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Starmie (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Metang", //Pokemon 1, Quirky, Genderless
@@ -2049,7 +2075,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Starmie -Solrock Seen- (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Metang", //Pokemon 1, Quirky, Genderless
@@ -2070,13 +2096,13 @@ namespace Eligor
             Pokemon_List.Rows.Add("Swellow (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Electabuzz (XD)",
                 63, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Swellow", //Pokemon 1, Shadow
@@ -2094,7 +2120,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Electabuzz -Swellow Seen- (XD)",
                 63, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Swellow", //Pokemon 1, Shadow -Seen-
@@ -2112,7 +2138,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Snorlax (XD)",
                 31, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Swellow", //Pokemon 1, Shadow
@@ -2133,7 +2159,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Snorlax -Swellow Seen- (XD)",
                 31, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Swellow", //Pokemon 1, Shadow -Seen-
@@ -2154,7 +2180,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Snorlax -Swellow & Electabuzz Seen- (XD)",
                 31, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Swellow", //Pokemon 1, Shadow -Seen-
@@ -2175,7 +2201,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Poliwrath (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Slowking", //Pokemon 1, Bashful, Male
@@ -2193,7 +2219,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Mr. Mime (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Slowking", //Pokemon 1, Bashful, Male
@@ -2214,7 +2240,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Mr. Mime -Poliwrath Seen- (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Slowking", //Pokemon 1, Bashful, Male
@@ -2235,7 +2261,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Dugtrio (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Glalie", //Pokemon 1, Hardy, Male
@@ -2253,7 +2279,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Manectric (XD)",
                 127, //Gender Threshold
                 1, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2262,7 +2288,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Salamence (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2274,7 +2300,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Marowak (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2292,7 +2318,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Lapras (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2313,7 +2339,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Salamence -Manectric Seen- (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2325,7 +2351,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Marowak -Manectric Seen- (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2343,7 +2369,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Marowak -Manectric & Salamence Seen- (XD)",
                 127, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2361,7 +2387,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Lapras -Manectric Seen- (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2382,7 +2408,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Lapras -Manectric & Salamence Seen- (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2403,7 +2429,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Lapras -Manectric & Marowak Seen- (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2424,7 +2450,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Lapras -Manectric & Salamence & Marowak Seen- (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ninjask", //Pokemon 1, Docile, Female
@@ -2445,19 +2471,19 @@ namespace Eligor
             Pokemon_List.Rows.Add("Lugia (XD)",
                 256, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Rhydon (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Moltres (XD)",
                 256, //Gender Threshold
                 1, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow
@@ -2466,7 +2492,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Exeggutor (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow
@@ -2478,7 +2504,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Tauros (XD)",
                 0, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow
@@ -2493,7 +2519,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Articuno (XD)",
                 0, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow
@@ -2511,7 +2537,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zapdos (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow
@@ -2532,7 +2558,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Exeggutor -Rhydon & Moltres Seen- (XD)",
                 127, //Gender Threshold
                 2, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2544,7 +2570,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Tauros -Rhydon & Moltres Seen- (XD)",
                 0, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2559,7 +2585,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Tauros -Rhydon & Moltres & Exeggutor Seen- (XD)",
                 0, //Gender Threshold
                 3, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2574,7 +2600,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Articuno -Rhydon & Moltres Seen- (XD)",
                 0, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2592,7 +2618,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Articuno -Rhydon & Moltres & Tauros Seen- (XD)",
                 0, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2610,7 +2636,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Articuno -Rhydon & Moltres & Exeggutor Seen- (XD)",
                 0, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2628,7 +2654,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Articuno -Rhydon & Moltres & Exeggutor & Tauros Seen- (XD)",
                 0, //Gender Threshold
                 4, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2646,7 +2672,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zapdos -Rhydon & Moltres Seen- (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2667,7 +2693,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zapdos -Rhydon & Moltres & Tauros Seen- (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2688,7 +2714,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zapdos -Rhydon & Moltres & Articuno Seen- (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2709,7 +2735,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zapdos -Rhydon & Moltres & Exeggutor Seen- (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2730,7 +2756,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zapdos -Rhydon & Moltres & Tauros & Articuno Seen- (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2751,7 +2777,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zapdos -Rhydon & Moltres Exeggutor & Tauros Seen- (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2772,7 +2798,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zapdos -Rhydon & Moltres & Exeggutor & Articuno Seen- (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2793,7 +2819,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Zapdos -Rhydon & Moltres & Exeggutor & Tauros & Articuno Seen- (XD)",
                 256, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Shadow Rhydon", //Pokemon 1, Shadow -Seen-
@@ -2814,7 +2840,7 @@ namespace Eligor
             Pokemon_List.Rows.Add("Dragonite (XD)",
                 127, //Gender Threshold
                 5, //Number of pokemon before Shadow
-                0, //1 = Shiny Allowed
+                false, //true = Shiny Allowed
                 -1, //Shiny Value
 
                 "Ludicolo", //Pokemon 1, Hardy, Male
@@ -2835,43 +2861,43 @@ namespace Eligor
             Pokemon_List.Rows.Add("Chikorita (XD)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Cyndaquil (XD)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Totodile (XD)",
                 31, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Meditite (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Shuckle (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Larvitar (XD)",
                 127, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             Pokemon_List.Rows.Add("Elekid (XD)",
                 63, //Gender Threshold
                 0, //Number of pokemon before Shadow
-                1, //1 = Shiny Allowed
+                true, //true = Shiny Allowed
                 -1); //Shiny Value
 
             DataView AZ = Pokemon_List.DefaultView;
@@ -2884,34 +2910,33 @@ namespace Eligor
 
         private void Button1_Click(object sender, EventArgs e)
         {
-            Terminate = LeadShadow = IsStarter = Button1.Enabled = SaveResults.Enabled = false;
-            ResCount = Halt = 0;
+            Terminate = LeadShadow = IsStarter = Button1.Enabled = SaveResults.Enabled = Halt = false;
+            ResCount = 0;
             MustBeShiny = ShinyOnly.Checked;
-            Seedtick = Startseed;
             Pokemon[0] = (string)Pokemon_List.Rows[SelectedPokemon = ComboBox1.SelectedIndex]["Pokemon"];
-            GenderThreshold[0] = (uint)Pokemon_List.Rows[SelectedPokemon]["Gender_Threshold"];
-            PokemonGenderTarget = $"{SelectGender.SelectedItem}";
-            HasLock = (uint)Pokemon_List.Rows[SelectedPokemon]["Lock"];
-            AllowShiny = (uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"];
-            MAX_HP_IV = (uint)HP_Max.Value;
-            MAX_Attack_IV = (uint)ATK_Max.Value;
-            MAX_Defense_IV = (uint)DEF_Max.Value;
-            MAX_Special_Attack_IV = (uint)SPA_Max.Value;
-            MAX_Special_Defense_IV = (uint)SPD_Max.Value;
-            MAX_Speed_IV = (uint)SPE_Max.Value;
-            MIN_HP_IV = (uint)HP_Min.Value;
-            MIN_Attack_IV = (uint)ATK_Min.Value;
-            MIN_Defense_IV = (uint)DEF_Min.Value;
-            MIN_Special_Attack_IV = (uint)SPA_Min.Value;
-            MIN_Special_Defense_IV = (uint)SPD_Min.Value;
-            MIN_Speed_IV = (uint)SPE_Min.Value;
-            MAX_IV_Sum = (uint)SUM_Max.Value;
-            MIN_IV_Sum = (uint)SUM_Min.Value;
-            MAX_HiddenPowerStrength = (uint)HID_Max.Value;
-            MIN_HiddenPowerStrength = (uint)HID_Min.Value;
+            GenderThreshold[0] = (int)Pokemon_List.Rows[SelectedPokemon]["Gender_Threshold"];
+            PokemonGenderTarget = SelectGender.SelectedIndex;
+            HasLock = (int)Pokemon_List.Rows[SelectedPokemon]["Lock"];
+            AllowShiny = (bool)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"];
+            MAX_HP_IV = (int)HP_Max.Value;
+            MAX_Attack_IV = (int)ATK_Max.Value;
+            MAX_Defense_IV = (int)DEF_Max.Value;
+            MAX_Special_Attack_IV = (int)SPA_Max.Value;
+            MAX_Special_Defense_IV = (int)SPD_Max.Value;
+            MAX_Speed_IV = (int)SPE_Max.Value;
+            MIN_HP_IV = (int)HP_Min.Value;
+            MIN_Attack_IV = (int)ATK_Min.Value;
+            MIN_Defense_IV = (int)DEF_Min.Value;
+            MIN_Special_Attack_IV = (int)SPA_Min.Value;
+            MIN_Special_Defense_IV = (int)SPD_Min.Value;
+            MIN_Speed_IV = (int)SPE_Min.Value;
+            MAX_IV_Sum = (int)SUM_Max.Value;
+            MIN_IV_Sum = (int)SUM_Min.Value;
+            MAX_HiddenPowerStrength = (int)HID_Max.Value;
+            MIN_HiddenPowerStrength = (int)HID_Min.Value;
             if (LimitResults.Checked == true)
             {
-                Limit = ResultLimit.Value;
+                Limit = (long)ResultLimit.Value;
             }
             else
             {
@@ -2919,11 +2944,11 @@ namespace Eligor
             }
             if (EPSV_Label.Checked == true)
             {
-                EPSV[0] = 1; EPSV[1] = EPSV_Val.Value;
+                EPSV = (int)EPSV_Val.Value;
             }
             else
             {
-                EPSV[0] = 0;
+                EPSV = -1;
             }
             if (Silent.Checked == false)
             {
@@ -2941,12 +2966,17 @@ namespace Eligor
             {
                 OutputCSV = true;
             }
-            for (uint i = 1; i <= HasLock; i++)
+            for (int i = 1; i <= HasLock; i++)
             {
                 Pokemon[i] = (string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Species"];
-                Gender[i] = (string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender"];
+                switch ((string)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender"])
+                {
+                    case "Genderless": Gender[i] = 0; break;
+                    case "Male": Gender[i] = 1; break;
+                    case "Female": Gender[i] = 2; break;
+                }
                 Nature[i] = (uint)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Nature"];
-                GenderThreshold[i] = (uint)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender_Threshold"];
+                GenderThreshold[i] = (int)Pokemon_List.Rows[SelectedPokemon][$"Shadow{i}_Gender_Threshold"];
             }
             for (int i = 0; i < Selected_Nature.Length; i++)
             {
@@ -3056,23 +3086,23 @@ namespace Eligor
             }
             if (TID_Match.Checked == true)
             {
-                TSID[0] = 1; TSID[1] = (int)TSVal.Value;
+                TSID = (int)TSVal.Value;
             }
             else if ((int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"] > -1)
             {
-                TSID[0] = 1; TSID[1] = (int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"];
+                TSID = (int)Pokemon_List.Rows[SelectedPokemon][$"ShinyValue"];
             }
             else
             {
-                TSID[0] = 0;
+                TSID = -1;
             }
             if (ETID_Check.Checked == true)
             {
-                StarterTID[0] = 1; StarterTID[1] = (uint)ETID_Val.Value;
+                StarterTID = (int)ETID_Val.Value;
             }
             else
             {
-                StarterTID[0] = 0;
+                StarterTID = -1;
             }
             switch (Pokemon[0])
             {
@@ -3092,11 +3122,11 @@ namespace Eligor
             }
             Results.Columns.Add("Pokemon Seed");
             Results.Columns.Add("PID");
-            if (AllowShiny == 1 && ForceShiny > 0 && HasLock > 0)
+            if (AllowShiny == true && ForceShiny > 0 && HasLock > 0)
             {
                 Results.Columns.Add("Enemy TSV");
             }
-            if ((uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == 0)
+            if ((bool)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == true)
             {
                 Results.Columns.Add("ReRoll TSV");
             }
@@ -3116,11 +3146,11 @@ namespace Eligor
             Results.Columns.Add("Characteristic");
             if (HasLock > 0)
             {
-                for (uint i = 1; i <= HasLock; i++)
+                for (int i = 1; i <= HasLock; i++)
                 {
                     Results.Columns.Add($"Pattern Pokemon {i}");
                 }
-                if (LeadShadow == false && !(AllowShiny == 1 && ForceShiny > 0))
+                if (LeadShadow == false && !(AllowShiny == true && ForceShiny > 0))
                 {
                     Results.Columns.Add("Safety Frames");
                 }
@@ -3132,9 +3162,11 @@ namespace Eligor
             }
             if (OutputCSV == true)
             {
-                SaveFileDialog svf = new SaveFileDialog();
-                svf.Filter = "Saves As (*.csv;*.txt)|*.csv;*.txt";
-                svf.FileName = $"Results({Pokemon[0]}) {DateTime.Now.ToString("yyyyMMddhhmmss")}";
+                SaveFileDialog svf = new SaveFileDialog
+                {
+                    Filter = "Saves As (*.csv;*.txt)|*.csv;*.txt",
+                    FileName = $"Results({Pokemon[0]}) {DateTime.Now.ToString("yyyyMMddhhmmss")}"
+                };
                 if (svf.ShowDialog() == DialogResult.OK)
                 {
                     StringBuilder columns = new StringBuilder();
@@ -3170,6 +3202,7 @@ namespace Eligor
                     ProgBar.SeedCount.Text = $"{Seedtick:X8}";
                     ProgBar.ResultsCount.Text = "0";
                 }));
+                Seedtick = Startseed;
                 SpreadWorker.RunWorkerAsync();
             }
             else
@@ -3182,18 +3215,18 @@ namespace Eligor
         {
             if (ProgBar.Cancel.Enabled == true)
             {
-                Halt = 0;
-                ReRollTSV = "None";
-                if (TSID[0] == 1)
+                Halt = false;
+                ReRollTSV = 9003;
+                if (TSID >= 0)
                 {
-                    TrainerShinyValue = (uint)TSID[1];
+                    TrainerShinyValue = (uint)TSID;
                 }
                 else
                 {
                     TrainerShinyValue = 9001;
                 }
                 SpreadFinder();
-                if (Halt == 0)
+                if (Halt == false)
                 {
                     WriteOut();
                 }
@@ -3231,23 +3264,28 @@ namespace Eligor
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             P1.Checked = P2.Checked = P3.Checked = P4.Checked = P5.Checked = PT.Checked = TID_Match.Checked = ETID_Check.Checked = ShinyOnly.Checked = ForceLabel.Enabled = SelectGender.Enabled = P1.Enabled = P2.Enabled = P3.Enabled = P4.Enabled = P5.Enabled = PT.Enabled = TID_Match.Enabled = EPSV_Label.Enabled = ETID_Check.Enabled = ShinyOnly.Enabled = false;
-            if ((uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == 0 && (string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Umbreon (Colosseum)" && (string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Espeon (Colosseum)")
+            if ((bool)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == false && (string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Umbreon (Colosseum)" && (string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Espeon (Colosseum)")
             {
                 ForceLabel.Enabled = TID_Match.Enabled = PT.Enabled = true;
             }
-            else if ((uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == 1)
+            else if ((bool)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == true)
             {
+                if ((int)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"] > 0)
+                {
+                    PT.Text = "Any";
+                    ForceLabel.Enabled = PT.Enabled = true;
+                }
+                else
+                {
+                    PT.Text = "Target";
+                }
                 if ((string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Eevee (XD)")
                 {
                     TID_Match.Enabled = true;
                 }
                     ShinyOnly.Enabled = true;
             }
-            if ((uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == 1 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"] > 0)
-            {
-                PT.Enabled = true;
-            }
-            for (uint i = 1; i <= (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"]; i++)
+            for (int i = 1; i <= (int)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"]; i++)
             {
                 if (i == 1) { P1.Enabled = true; }
                 if (i == 2) { P2.Enabled = true; }
@@ -3255,7 +3293,7 @@ namespace Eligor
                 if (i == 4) { P4.Enabled = true; }
                 if (i == 5) { P5.Enabled = true; }
             }
-            for (uint i = 1; i < (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"]; i++)
+            for (int i = 1; i < (int)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"]; i++)
             {
                 if (i == 1 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow1_Nature"] == 26) { P1.Enabled = false; }
                 if (i == 2 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow2_Nature"] == 26) { P2.Enabled = false; }
@@ -3263,12 +3301,12 @@ namespace Eligor
                 if (i == 4 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow4_Nature"] == 26) { P4.Enabled = false; }
                 if (i == 5 && (uint)Pokemon_List.Rows[ComboBox1.SelectedIndex][$"Shadow5_Nature"] == 26) { P5.Enabled = false; }
             }
-            switch ((uint)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Gender_Threshold"])
+            switch ((int)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Gender_Threshold"])
             {
                 case 0: SelectGender.SelectedIndex = 1; break;
                 case 255: SelectGender.SelectedIndex = 2; break;
-                case uint n when n > 255: SelectGender.SelectedIndex = 0; break;
-                case uint n when n > 0 && n < 255: SelectGender.Enabled = true; break;
+                case int n when n > 255: SelectGender.SelectedIndex = 0; break;
+                case int n when n > 0 && n < 255: SelectGender.Enabled = true; break;
             }
             switch ((string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"])
             {
@@ -3283,7 +3321,7 @@ namespace Eligor
 
         private void ForceCheck()
         {
-            if ((uint) Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == 0)
+            if ((bool)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == false)
             {
                 TID_Match.Checked = false;
             }
@@ -3292,7 +3330,7 @@ namespace Eligor
 
         private void TID_Match_Click(object sender, EventArgs e)
         {
-            if (TID_Match.Checked == true && (uint)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == 0)
+            if (TID_Match.Checked == true && (bool)Pokemon_List.Rows[SelectedPokemon]["AllowShiny"] == false)
             {
                 ForceCheck();
                 TID_Match.Checked = true;
@@ -3302,6 +3340,10 @@ namespace Eligor
         private void TID_Match_CheckStateChanged(object sender, EventArgs e)
         {
             TSV_Label.Enabled = TSVal.Enabled = TID.Enabled = SID.Enabled = TID_Label.Enabled = SID_Label.Enabled = TID_Match.Checked; SetTID();
+            if (TID_Match.Checked == false && ShinyOnly.Checked == true)
+            {
+                ShinyOnly.Checked = false;
+            }
         }
 
         private void ETID_Check_CheckStateChanged(object sender, EventArgs e)
@@ -3468,7 +3510,7 @@ namespace Eligor
             {
                 ProgBar.SeedCount.Text = $"{Seedtick:X8}";
                 ProgBar.ResultsCount.Text = $"{ResCount}";
-                ProgBar.ProgressBar1.Value = (int)Math.Max(0, Math.Min(2147483647, (Seedtick - Startseed) / 2));
+                ProgBar.ProgressBar1.Value = (int)Math.Max(0, Math.Min(ProgBar.ProgressBar1.Maximum, (Seedtick - Startseed) / 2));
             }));
         }
 
@@ -3489,7 +3531,7 @@ namespace Eligor
                     while (Terminate == false)
                     {
                         StartSearch();
-                        if (Halt == 0)
+                        if (Halt == false)
                         {
                             Output.WriteLine(string.Join(",", Line.ToArray()));
                         }
@@ -3566,15 +3608,25 @@ namespace Eligor
 
         private void SaveResults_Click(object sender, EventArgs e)
         {
-            SaveFileDialog svf = new SaveFileDialog();
-            svf.Filter = "Saves As (*.csv;*.txt)|*.csv;*.txt";
-            svf.FileName = $"Results({Pokemon[0]}) {DateTime.Now.ToString("yyyyMMddhhmmss")}";
+            SaveFileDialog svf = new SaveFileDialog
+            {
+                Filter = "Saves As (*.csv;*.txt)|*.csv;*.txt",
+                FileName = $"Results({Pokemon[0]}) {DateTime.Now.ToString("yyyyMMddhhmmss")}"
+            };
             if (svf.ShowDialog() == DialogResult.OK)
             {
                 using (Output = new StreamWriter(svf.FileName))
                 {
                     Output.WriteLine(DumpResults());
                 }
+            }
+        }
+
+        private void ShinyOnly_CheckStateChanged(object sender, EventArgs e)
+        {
+            if (ShinyOnly.Checked == true && TID_Match.Enabled == true)
+            {
+                TID_Match.Checked = true;
             }
         }
     }
