@@ -22,7 +22,6 @@ namespace Eligor
         string[] NatureText = { "Hardy", "Lonely", "Brave", "Adamant", "Naughty", "Bold", "Docile", "Relaxed", "Impish", "Lax", "Timid", "Hasty", "Serious", "Jolly", "Naive", "Modest", "Mild", "Quiet", "Bashful", "Rash", "Calm", "Gentle", "Sassy", "Careful", "Quirky" };
         string[] HiddenPowerText = { "Fighting", "Flying", "Poison", "Ground", "Rock", "Bug", "Ghost", "Steel", "Fire", "Water", "Grass", "Electric", "Psychic", "Ice", "Dragon", "Dark" };
         string[] Pokemon = { "", "", "", "", "", "" };
-        
         string OutputFile;
 
         bool Halt;
@@ -3268,23 +3267,27 @@ namespace Eligor
             {
                 ForceLabel.Enabled = TID_Match.Enabled = PT.Enabled = true;
             }
-            else if ((bool)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == true)
+            
+            if ((bool)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == true)
             {
-                if ((int)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"] > 0)
-                {
-                    PT.Text = "Any";
-                    ForceLabel.Enabled = PT.Enabled = true;
-                }
-                else
-                {
-                    PT.Text = "Target";
-                }
-                if ((string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Eevee (XD)")
-                {
-                    TID_Match.Enabled = true;
-                }
-                    ShinyOnly.Enabled = true;
+                ShinyOnly.Enabled = true;
             }
+
+            if ((bool)Pokemon_List.Rows[ComboBox1.SelectedIndex]["AllowShiny"] == true && (int)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"] > 0 )
+            {
+                PT.Text = "Any";
+                ForceLabel.Enabled = PT.Enabled = true;
+            }
+            else
+            {
+                PT.Text = "Target";
+            }
+
+            if ((string)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Pokemon"] != "Eevee (XD)")
+            {
+                TID_Match.Enabled = true;
+            }
+
             for (int i = 1; i <= (int)Pokemon_List.Rows[ComboBox1.SelectedIndex]["Lock"]; i++)
             {
                 if (i == 1) { P1.Enabled = true; }
