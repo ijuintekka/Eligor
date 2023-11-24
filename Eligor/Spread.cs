@@ -835,7 +835,7 @@ namespace Eligor
                 true, //true = Shiny Allowed
                 -1); //Shiny Value
 
-            Pokemon_List.Rows.Add("Heracross (Colosseum)",
+            Pokemon_List.Rows.Add("Heracross (Colosseum) Realgam Tower (1st Appearance, Lock)",
             127, //Gender Threshold
                 2, //Number of pokemon before Shadow
                 true, //true = Shiny Allowed
@@ -846,6 +846,12 @@ namespace Eligor
 
                 "Ariados", //Pokemon 2, Hardy, Female
                 "Female", 0, 127);
+
+			Pokemon_List.Rows.Add("Heracross (Colosseum) Snagem Hideout (2nd Appearance, No Lock)",
+            127, //Gender Threshold
+                0, //Number of pokemon before Shadow
+                true, //true = Shiny Allowed
+                -1);
 
             Pokemon_List.Rows.Add("Skarmory (Colosseum)",
                 127, //Gender Threshold
